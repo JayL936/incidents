@@ -1,0 +1,121 @@
+﻿@model IEnumerable<WebApplication1.Models.Incident>
+@using Newtonsoft.Json
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+<script>
+
+    var map;
+    var counter = 0;
+    var markers = [];
+    var data = @Html.Raw(JsonConvert.SerializeObject(this.Model));
+
+    var locations = [];
+    var location;
+
+    function initialize() {
+        var mapProp = {
+            center: new google.maps.LatLng(52.229491, 21.002137),
+            zoom: 12,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+
+        google.maps.event.addListener(map, 'click', function (event) {
+            placeMarker(event.latLng);
+        });
+    }
+
+    function placeMarker(location) {
+
+        counter++;
+
+        var marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            id: counter
+        });
+
+        markers.push(marker);
+
+        var deleteButton = '<button id="deleteButton" data-id="' + counter + '">Delete</button>';
+        var editButton = '<button id="editButton" data-id="' + counter + '">Edit</button>';
+
+        var infowindow = new google.maps.InfoWindow({
+            content: 'Latitude: ' + location.lat() +
+            '<br>Longitude: ' + location.lng() +
+            '<br>Counter: ' + counter +
+            '<br>' + deleteButton +
+            ' ' + editButton
+        });
+
+        google.maps.event.addListener(marker, 'click', function () {
+            infowindow.open(map, marker);
+            var buttonDelete = document.getElementById('deleteButton');
+            var buttonEdit = document.getElementById('editButton');
+            var id = parseInt(buttonDelete.getAttribute('data-id'));
+            buttonDelete.onclick = function () {
+                deleteMarker(id);
+            };
+        });
+    }
+
+    function deleteMarker(markerId) {
+
+        for (var i = 0; i < markers.length; i++) {
+            if (markers[i].id === markerId) {
+                markers[i].setMap(null);
+            }
+        }
+    }
+
+    function editMarker(markerId) {
+
+
+    }
+
+    function displayLocation() {
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(data.Lat, data.Long),
+            map: map
+        });
+    }
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
+
+<div class="jumbotron">
+   
+    
+</div>
+
+<div id="googleMap" style="width:70%;height:500px;"></div>
+
+<div class="row">
+    <table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Lat)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Long)
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Lat)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Long)
+        </td>
+    </tr>
+}
+
+</table>
+</div>
