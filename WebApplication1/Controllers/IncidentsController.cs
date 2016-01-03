@@ -38,7 +38,10 @@ namespace WebApplication1.Controllers
         // GET: Incidents/Create
         public ActionResult Create()
         {
-            return View();
+            Incident newIncident = new Incident();
+            newIncident.AddDate = DateTime.Today.Date; 
+            newIncident.DateOfIncident = DateTime.Now;
+            return this.View(newIncident);
         }
 
         // POST: Incidents/Create

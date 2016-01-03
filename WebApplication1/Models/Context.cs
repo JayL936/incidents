@@ -9,6 +9,7 @@ namespace WebApplication1.Models
         {
             Database.SetInitializer<Context>(new ContextSeed());
         }
+
         public Context() : base("Context")
         {
 
