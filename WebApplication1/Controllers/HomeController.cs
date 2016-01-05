@@ -13,11 +13,6 @@ namespace WebApplication1.Controllers
 
         public ActionResult Index()
         {
-            var init = db.Incidents.Count();
-            var incident = new Incident();
-            
-            var query = from q in db.Incidents
-                        select new {q.Lat, q.Long};
             return View(db.Incidents.ToList());
         }
 

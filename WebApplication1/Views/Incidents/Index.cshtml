@@ -18,6 +18,18 @@
             @Html.DisplayNameFor(model => model.DateOfIncident)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.TimeOfIncident)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Address)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.City)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ZipCode)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Type)
         </th>
         <th>
@@ -39,6 +51,18 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.DateOfIncident)
+        </td>
+        <th>
+            @Html.DisplayFor(model => item.TimeOfIncident)
+        </th>
+        <td>
+            @Html.DisplayFor(modelItem => item.Address)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.City)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ZipCode)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Type)

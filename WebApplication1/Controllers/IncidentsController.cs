@@ -39,8 +39,9 @@ namespace WebApplication1.Controllers
         public ActionResult Create()
         {
             Incident newIncident = new Incident();
-            newIncident.AddDate = DateTime.Today.Date; 
-            newIncident.DateOfIncident = DateTime.Now;
+            newIncident.AddDate = DateTime.Today.Date;
+            newIncident.DateOfIncident = DateTime.Today.Date;
+            newIncident.TimeOfIncident = DateTime.Today.TimeOfDay;
             return this.View(newIncident);
         }
 
@@ -81,7 +82,7 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,AddDate,DateOfIncident,Type,About,Lat,Long")] Incident incident)
+        public ActionResult Edit([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long")] Incident incident)
         {
             if (ModelState.IsValid)
             {

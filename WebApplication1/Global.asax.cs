@@ -13,6 +13,9 @@ namespace WebApplication1
     {
         protected void Application_Start()
         {
+            ModelBinders.Binders.Add(typeof(double), new DoubleModelBinder());
+            ModelBinders.Binders.Add(typeof(double?), new DoubleModelBinder());
+
             System.Data.Entity.Database.SetInitializer(new ContextSeed());
             Context db = new Context();
             db.Database.Initialize(true);

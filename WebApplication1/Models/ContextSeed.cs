@@ -13,7 +13,8 @@ namespace WebApplication1.Models
 
             var incidents = new List<Incident>
             {
-                new Incident{Type="Wypadek", Lat=52.229491, Long=21.002137, About="Incydent testowy", AddDate=DateTime.Now, DateOfIncident=DateTime.Parse("2010-09-30")}
+                new Incident{Type="Wypadek", Lat=52.229491, Long=21.002137, About="Incydent testowy", AddDate=DateTime.Now, 
+                    DateOfIncident=DateTime.Parse("2010-09-30"), TimeOfIncident=TimeSpan.Parse("15:30:00"), City="Warsaw", Address="Twarda 30"}
             };
 
             incidents.ForEach(i => context.Incidents.Add(i));

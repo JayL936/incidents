@@ -11,9 +11,9 @@
     var map;
     var counter = 0;
     var markers = [];
-    var data = @Html.Raw(JsonConvert.SerializeObject(this.Model));
-
     var locations = [];
+    var geocoder;
+    var infowindow = new google.maps.InfoWindow;
 
     function initialize() {
         var mapProp = {
@@ -22,10 +22,13 @@
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+        geocoder = new google.maps.Geocoder;
 
         @foreach (var item in Model) {
         <text>
-            var latLng = new google.maps.LatLng(@(item.Lat), @(item.Long));
+        var lat = @item.Lat.ToString().Replace(",", ".");
+        var long = @item.Long.ToString().Replace(",", ".");
+            var latLng = new google.maps.LatLng(lat, long);
             placeMarker(latLng);
         </text>
         }
@@ -46,28 +49,40 @@
             id: counter
         });
 
+        var address;
+
         markers.push(marker);
 
         var deleteButton = '<button id="deleteButton" data-id="' + counter + '">Delete</button>';
         var editButton = '<button id="editButton" data-id="' + counter + '">Edit</button>';
 
-        var infowindow = new google.maps.InfoWindow({
-            content: 'Latitude: ' + location.lat() +
+        reverseGeocoder(location, function(result, err){
+            address = result;
+            document.getElementById("address").innerHTML = address;
+        });
+    //    address = document.getElementById("address").innerText;  //dziala, wyswietla poprzedni adres
+
+        var data = 'Latitude: ' + location.lat() +
             '<br>Longitude: ' + location.lng() +
             '<br>Counter: ' + counter +
+            '<br>Address: ' + address +
             '<br>' + deleteButton +
-            ' ' + editButton
-        });
+            ' ' + editButton;
 
-        google.maps.event.addListener(marker, 'click', function () {
+        google.maps.event.addListener(marker, 'click', function (event) {
+            if(infowindow) infowindow.close();
+            infowindow = new google.maps.InfoWindow({content: data})
             infowindow.open(map, marker);
             var buttonDelete = document.getElementById('deleteButton');
             var buttonEdit = document.getElementById('editButton');
-            var id = parseInt(buttonDelete.getAttribute('data-id'));
             buttonDelete.onclick = function () {
-                deleteMarker(id);
+                deleteMarker(marker.id);
             };
+            buttonEdit.onclick = function() {
+                editMarker(geocoder, map, event.latLng);
+            }
         });
+
     }
 
     function deleteMarker(markerId) {
@@ -79,9 +94,45 @@
         }
     }
 
-    function editMarker(markerId) {
+    function reverseGeocoder(latLng, callback) {
+        geocoder.geocode({'location': latLng}, function(results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+                if (results[0]) {
+                    callback(results[0].formatted_address, null);
+                } else {     
+                    callback(null, status);
+                }
+            } else {
+                window.alert('Geocoder failed due to: ' + status);
+            }
+        });
+    }
 
+    function editMarker() {
 
+    }
+
+    function getDatatotheController(result) {
+        var mode = result
+        var parameters = { 'data': mode };
+
+        $.ajax({
+            type: "GET",
+            url: '/Incidents/Create',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            data: parameters,
+            success: successFunc,
+            error: errorFunc
+        });
+
+        function successFunc(data) {
+            alert(data);
+        }
+
+        function errorFunc() {
+            alert(error);
+        };
     }
 
     function displayLocation() {
@@ -101,6 +152,10 @@
     </div>*@
 
 <div id="googleMap" style="width:100%;height:700px;"></div>
+
+<div id="address">
+
+</div>
 
 <div class="row">
     <table class="table">
