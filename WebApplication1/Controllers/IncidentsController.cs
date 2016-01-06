@@ -42,7 +42,15 @@ namespace WebApplication1.Controllers
             newIncident.AddDate = DateTime.Today.Date;
             newIncident.DateOfIncident = DateTime.Today.Date;
             newIncident.TimeOfIncident = DateTime.Today.TimeOfDay;
+            
             return this.View(newIncident);
+        }
+
+        [HttpGet]
+        public ActionResult Create(Single[] JsonStr)
+        {
+           
+            return View();
         }
 
         // POST: Incidents/Create
@@ -50,7 +58,7 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,AddDate,DateOfIncident,Type,About,Lat,Long")] Incident incident)
+        public ActionResult Create([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long,Address,City,ZipCode")] Incident incident)
         {
             if (ModelState.IsValid)
             {
@@ -70,6 +78,8 @@ namespace WebApplication1.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Incident incident = db.Incidents.Find(id);
+            incident.Lat.ToString().Replace(",", ".");
+            incident.Long.ToString().Replace(",", ".");
             if (incident == null)
             {
                 return HttpNotFound();
@@ -82,7 +92,7 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long")] Incident incident)
+        public ActionResult Edit([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long,Address,City,ZipCode")] Incident incident)
         {
             if (ModelState.IsValid)
             {
