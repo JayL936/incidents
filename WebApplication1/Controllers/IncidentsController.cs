@@ -42,15 +42,16 @@ namespace WebApplication1.Controllers
             newIncident.AddDate = DateTime.Today.Date;
             newIncident.DateOfIncident = DateTime.Today.Date;
             newIncident.TimeOfIncident = DateTime.Today.TimeOfDay;
-            
+
             return this.View(newIncident);
         }
 
-        [HttpGet]
-        public ActionResult Create(Single[] JsonStr)
+        [HttpPost]
+      //  [ValidateAntiForgeryToken]
+        public ActionResult CreateIncident(string JsonStr)
         {
-           
-            return View();
+            ViewBag.Title = JsonStr;
+            return View("Create");
         }
 
         // POST: Incidents/Create

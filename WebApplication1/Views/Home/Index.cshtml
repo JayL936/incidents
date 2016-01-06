@@ -162,14 +162,13 @@
         document.getElementById("address").innerText = address + " udalo sie!";
         document.getElementById("test").innerText = location + " udalo sie!";
 
-        var data = JSON.stringify(fulladdress + location)
+        var data = JSON.stringify(fulladdress) + JSON.stringify(location)
 
         $.ajax({
             type: "POST",
-            url: "Incidents/Create",
-            dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            data: data
+            url: "Incidents/CreateIncident",
+            dataType: "text",
+            data:  {JsonStr : data} 
         })
     }
 
@@ -179,7 +178,7 @@
 
         $.ajax({
             type: "GET",
-            url: '/Incidents/Create',
+            url: '/Incidents/CreateIncident',
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: parameters,
