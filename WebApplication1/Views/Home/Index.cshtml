@@ -158,19 +158,61 @@
         });
     }
 
+    function postData(url, allData) {
+        form = document.createElement('form');
+        for(data in allData)
+        {
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.name = data;
+            input.value = allData[data].toString();
+            form.appendChild(input);
+        }
+        form.method = 'post';
+        form.action = url;
+        form.submit();
+    }
+
     function addMarker(location, fulladdress) {
         document.getElementById("address").innerText = address + " udalo sie!";
         document.getElementById("test").innerText = location + " udalo sie!";
 
         var data = JSON.stringify(fulladdress) + JSON.stringify(location)
+        postData('/Incidents/Create', {JsonStr : data})
 
-        $.ajax({
-            type: "POST",
-            url: "Incidents/CreateIncident",
-            dataType: "text",
-            data:  {JsonStr : data} 
-        })
+        //form = document.createElement('form');
+        //for(data in allData)
+        //{
+        //    var input = document.createElement('input');
+        //    input.type = 'text';
+        //    input.name = data;
+        //    input.value = allData[data].toString();
+        //    form.appendChild(input);
+        //}
+        //form.method = 'post';
+        //form.action = 'Incidents/CreateIncident';
+        //form.submit();
+
+        //$.ajax({
+        //    type: "GET",
+        //    url: "../Incidents/Create",
+        //    dataType: "text",
+        //    data:  {JsonStr : data}, 
+        //    success: function(data){
+        //        window.location.href = "../Incidents/Create"
+        //    },
+        //    error: function (xhr, ajaxOptions, thrownError) {
+        //    alert(xhr.status);
+        //    }
+        //})
+            
+        //    .done(function () {
+        //    window.location.href = "../Incidents/Create"
+        //})
+        
     }
+
+    
 
     function getDatatotheController(result) {
         var mode = result

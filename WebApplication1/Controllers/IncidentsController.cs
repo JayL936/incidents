@@ -36,12 +36,13 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Incidents/Create
-        public ActionResult Create()
+        public ActionResult Create(string JsonStr)
         {
             Incident newIncident = new Incident();
             newIncident.AddDate = DateTime.Today.Date;
             newIncident.DateOfIncident = DateTime.Today.Date;
             newIncident.TimeOfIncident = DateTime.Today.TimeOfDay;
+            newIncident.Address = JsonStr;
 
             return this.View(newIncident);
         }
@@ -50,8 +51,11 @@ namespace WebApplication1.Controllers
       //  [ValidateAntiForgeryToken]
         public ActionResult CreateIncident(string JsonStr)
         {
-            ViewBag.Title = JsonStr;
-            return View("Create");
+            Incident newIncident = new Incident();
+            newIncident.Address = JsonStr;
+        //   RedirectToAction("Create");
+           return View("Create", newIncident);
+            
         }
 
         // POST: Incidents/Create
