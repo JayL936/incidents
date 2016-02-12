@@ -4,104 +4,294 @@
     ViewBag.Title = "Create";
 }
 
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
+<script type="text/javascript">
+
+    var map;
+    var counter = 0;
+    var markers = [];
+    var marker = new google.maps.Marker;
+    var locations = [];
+    var geocoder;
+    var infowindow = new google.maps.InfoWindow;
+    var markerCluster;
+    var address;
+
+    function initialize() {
+        var mapProp = {
+            center: new google.maps.LatLng(52.229491, 21.002137),
+            zoom: 12,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+        geocoder = new google.maps.Geocoder;
+
+        @*@foreach (var item in Model) {
+        <text>
+        counter++;
+        var lat = @item.Lat.ToString().Replace(",", ".");
+        var long = @item.Long.ToString().Replace(",", ".");
+            var latLng = new google.maps.LatLng(lat, long);
+            placedbMarker(latLng);
+        </text>
+        }*@
+        counter++;
+
+        markerCluster = new MarkerClusterer(map, markers);
+        google.maps.event.addListener(map, 'click', function (event) {
+            placeMarker(event.latLng);
+        });
+
+    }
+
+    function placedbMarker(location) {
+
+        var dbmarker = new google.maps.Marker({
+            position: location,
+            map: map,
+            id: counter
+        });
+        var address;
+
+        markers.push(dbmarker);
+
+        var deleteButton = '<button id="deleteButton" data-id="' + counter + '">Delete incident</button>';
+        var editButton = '<button id="editButton" data-id="' + counter + '">Edit incident</button>';
+
+        var data = 'Counter: ' + counter +
+            '<br>' + deleteButton +
+            ' ' + editButton;
+
+        google.maps.event.addListener(dbmarker, 'click', function (event) {
+            if (infowindow) infowindow.close();
+            infowindow = new google.maps.InfoWindow({ content: data })
+            infowindow.open(map, dbmarker);
+            reverseGeocoder(location, function (result, err) {
+                address = result;
+                infowindow.setContent(result + "<br />" + data);
+                document.getElementById("address").innerHTML = address;
+            });
+            var buttonDelete = document.getElementById('deleteButton');
+            var buttonEdit = document.getElementById('editButton');
+            buttonDelete.onclick = function () {
+                deleteMarker(marker.id);
+            };
+            buttonEdit.onclick = function () {
+                editdbMarker(geocoder, map, event.latLng);
+            }
+        });
+    }
+
+    function placeMarker(location) {
+
+        if (marker) deleteMarker(marker.id);
+        marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            id: counter
+        });
+        var address;
+
+        markers.push(marker);
+        var deleteButton = '<button id="deleteButton" data-id="' + counter + '">Delete marker</button>';
+        var addButton = '<button id="addButton" data-id="' + counter + '">Add incident</button>';
+
+        document.getElementById("lat").innerHTML = location.lat();
+        document.getElementById("lng").innerHTML = location.lng();
+        document.getElementById('@Html.IdFor(model => model.Lat)').value = location.lat();
+        document.getElementById('@Html.IdFor(model => model.Long)').value = location.lng();
+
+        reverseGeocoder(location, function (result, err) {
+            address = result;
+            address = address.split(',');
+            var matches = address[1].match(/\d+/g);
+            var zip;
+            if (matches != null) {
+                zip = address[1].slice(0, 7);
+                address[1] = address[1].slice(7);
+            }
+            else {
+                zip = "00-000";
+            }
+
+            //var isnum = /^\d+$/.test(address[1]);
+            //if (isnum == true)
+            //    address[1].slice(0, 6);
+            document.getElementById('@Html.IdFor(model => model.Address)').value = address[0].trim();
+            document.getElementById('@Html.IdFor(model => model.City)').value = address[1].trim();
+            document.getElementById('@Html.IdFor(model => model.ZipCode)').value = zip.trim();
+        });
+
+        var data = 'Counter: ' + counter +
+            '<br>What would you like to do?<br><br>' + deleteButton +
+            ' ' + addButton;
+
+        google.maps.event.addListener(marker, 'click', function (event) {
+            if (infowindow) infowindow.close();
+            infowindow = new google.maps.InfoWindow({ content: data });
+            infowindow.open(map, marker);
+
+            var buttonDelete = document.getElementById('deleteButton');
+            var buttonAdd = document.getElementById('addButton');
+            buttonDelete.onclick = function () {
+                deleteMarker(marker.id);
+            };
+            buttonAdd.onclick = function () {
+                addMarker(event.latLng, address);
+            }
+        });
+    }
+
+    function deleteMarker(markerId) {
+
+        for (var i = 0; i < markers.length; i++) {
+            if (markers[i].id === markerId) {
+                markers[i].setMap(null);
+                markers.splice(i, 1);
+            }
+        }
+    }
+
+    function reverseGeocoder(latLng, callback) {
+        geocoder.geocode({ 'location': latLng }, function (results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+                if (results[0]) {
+                    callback(results[0].formatted_address, null);
+                } else {
+                    callback(null, status);
+                }
+            } else {
+                window.alert('Geocoder failed due to: ' + status);
+            }
+        });
+    }
+
+    function addMarker(location, fulladdress) {
+        document.getElementById("address").innerText = address + " udalo sie!";
+        document.getElementById("test").innerText = location + " udalo sie!";
+
+        var data = JSON.stringify(fulladdress) + JSON.stringify(location)
+        postData('/Incidents/Create', { JsonStr: data })
+
+    }
+
+    function displayLocation() {
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(data.Lat, data.Long),
+            map: map
+        });
+    }
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
+
 <h2>Create</h2>
+<h4>Incident</h4>
+<div id="googleMap" style="height: 500px; width: 100%"></div>
 
 
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Incident</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.AddDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.AddDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.AddDate, "", new { @class = "text-danger" })
+        <div class="form-horizontal">
+            
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.AddDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.AddDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.AddDate, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.DateOfIncident, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.DateOfIncident, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.DateOfIncident, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.DateOfIncident, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.DateOfIncident, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.DateOfIncident, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.TimeOfIncident, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.TimeOfIncident, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.TimeOfIncident, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.TimeOfIncident, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.TimeOfIncident, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.TimeOfIncident, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.Address, htmlAttributes: new { @class = "form-control", @id = "Address" } )
+                    @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.City, htmlAttributes: new { @class = "form-control", @id = "City" } )
+                    @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.ZipCode, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ZipCode, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.ZipCode, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.ZipCode, htmlAttributes: new { @class = "form-control", @id="ZipCode" } )
+                    @Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.About, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.About, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.About, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.About, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.About, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.About, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Lat, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Lat, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Lat, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Lat, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.Lat, htmlAttributes: new { @class = "form-control", @id="Lat" } )
+                    @Html.ValidationMessageFor(model => model.Lat, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Long, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Long, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Long, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Long, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.Long, htmlAttributes: new { @class = "form-control", @id = "Long" } )
+                    @Html.ValidationMessageFor(model => model.Long, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
             </div>
+
+            
         </div>
-    </div>
 }
+
+                        
+
 
 <div>
     @Html.ActionLink("Back to List", "Index")

@@ -14,12 +14,12 @@ namespace WebApplication1.Models
      //   [DisplayFormat(DataFormatString = "{yyyy-MM-dd}")]
         public DateTime AddDate { get; set; }
 
-        [Display(Name = "Date of incident")]
+        [Display(Name = "Incident date")]
         [DataType(DataType.Date)]
       //  [DisplayFormat(DataFormatString = "{yyyy-MM-dd}")]
         public DateTime DateOfIncident { get; set; }
 
-        [Display(Name = "Time of incident")]
+        [Display(Name = "Incident time")]
         public TimeSpan TimeOfIncident { get; set; }
 
         public string Type { get; set; }
