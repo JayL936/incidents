@@ -98,8 +98,6 @@
         var deleteButton = '<button id="deleteButton" data-id="' + counter + '">Delete marker</button>';
         var addButton = '<button id="addButton" data-id="' + counter + '">Add incident</button>';
 
-        document.getElementById("lat").innerHTML = location.lat();
-        document.getElementById("lng").innerHTML = location.lng();
         document.getElementById('@Html.IdFor(model => model.Lat)').value = location.lat();
         document.getElementById('@Html.IdFor(model => model.Long)').value = location.lng();
 
@@ -116,9 +114,6 @@
                 zip = "00-000";
             }
 
-            //var isnum = /^\d+$/.test(address[1]);
-            //if (isnum == true)
-            //    address[1].slice(0, 6);
             document.getElementById('@Html.IdFor(model => model.Address)').value = address[0].trim();
             document.getElementById('@Html.IdFor(model => model.City)').value = address[1].trim();
             document.getElementById('@Html.IdFor(model => model.ZipCode)').value = zip.trim();
