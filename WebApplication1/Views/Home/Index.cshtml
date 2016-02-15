@@ -34,8 +34,8 @@
         counter++;
         var lat = @item.Lat.ToString().Replace(",", ".");
         var long = @item.Long.ToString().Replace(",", ".");
-            var latLng = new google.maps.LatLng(lat, long);
-            placedbMarker(latLng);
+        var latLng = new google.maps.LatLng(lat, long);
+        placedbMarker(latLng);
         </text>
         }
         counter++;
@@ -57,32 +57,49 @@
         var address;
 
         markers.push(dbmarker);
-        
-        var deleteButton = '<button id="deleteButton" data-id="' + counter + '">Delete incident</button>';
+
+        var delButton = '<button id="delButton" data-id="' + counter + '">Delete incident</button>';
         var editButton = '<button id="editButton" data-id="' + counter + '">Edit incident</button>';
 
+        document.getElementById("lat").innerHTML = location.lat();
+        document.getElementById("lng").innerHTML = location.lng();
+
+        reverseGeocoder(location, function(result, err){
+            address = result;
+            document.getElementById("address").innerHTML = address;
+        });
+
         var data = 'Counter: ' + counter +
-            '<br>' + deleteButton +
+            '<br>' + delButton +
             ' ' + editButton;
 
         google.maps.event.addListener(dbmarker, 'click', function (event) {
+
             if(infowindow) infowindow.close();
-            infowindow = new google.maps.InfoWindow({content: data})
+            infowindow = new google.maps.InfoWindow({content: data});
             infowindow.open(map, dbmarker);
-            reverseGeocoder(location, function(result, err){
-                address = result;
-                infowindow.setContent(result + "<br />" + data);
-                document.getElementById("address").innerHTML = address;
-            });
-            var buttonDelete = document.getElementById('deleteButton');
+            //reverseGeocoder(location, function(result, err){
+            //    address = result;
+            //    infowindow.setContent(result + "<br />" + data);
+            //    document.getElementById("address").innerHTML = address;
+            //});
+            var buttonDel = document.getElementById('delButton');
             var buttonEdit = document.getElementById('editButton');
-            buttonDelete.onclick = function () {
-                deleteMarker(marker.id);
+            buttonDel.onclick = function () {
+                deldbMarker(dbmarker.id);
             };
             buttonEdit.onclick = function() {
-                editdbMarker(geocoder, map, event.latLng);
+                editdbMarker(dbmarker.id);
             }
         });
+    }
+
+    function editdbMarker(counter) {
+        window.location.href = "/Incidents/Edit/" + counter;
+    }
+
+    function deldbMarker(counter) {
+        window.location.href = "/Incidents/Delete/" + counter;
     }
 
     function placeMarker(location) {
@@ -106,7 +123,6 @@
 
         reverseGeocoder(location, function(result, err){
             address = result;
-       //     infowindow.setContent(result + "<br />" + data);
             document.getElementById("address").innerHTML = address;
         });
 
@@ -115,14 +131,11 @@
             ' ' + addButton;
 
         google.maps.event.addListener(marker, 'click', function (event) {
+
             if(infowindow) infowindow.close();
             infowindow = new google.maps.InfoWindow({content: data});
             infowindow.open(map, marker);
-            //reverseGeocoder(location, function(result, err){
-            //    address = result;
-            //    infowindow = new google.maps.InfoWindow({content: result + "<br />" + data});//   infowindow.setContent(result + "<br />" + data);
-            //    document.getElementById("address").innerHTML = address;
-            //});
+
             var buttonDelete = document.getElementById('deleteButton');
             var buttonAdd = document.getElementById('addButton');
             buttonDelete.onclick = function () {
@@ -137,9 +150,10 @@
     function deleteMarker(markerId) {
 
         for (var i = 0; i < markers.length; i++) {
-            if (markers[i].id === markerId) {
+            if (markers[i].id == markerId) {
                 markers[i].setMap(null);
-                markers.splice(i, 1);
+                markers.splice(-1, 1);
+             //   markers.pop(markerId);
             }
         }
     }
@@ -149,7 +163,7 @@
             if (status === google.maps.GeocoderStatus.OK) {
                 if (results[0]) {
                     callback(results[0].formatted_address, null);
-                } else {     
+                } else {
                     callback(null, status);
                 }
             } else {
@@ -179,6 +193,7 @@
 
         var data = JSON.stringify(fulladdress) + JSON.stringify(location)
         postData('/Incidents/Create', {JsonStr : data})
+        window.location.href = "/Incidents/Create";
 
         //form = document.createElement('form');
         //for(data in allData)
@@ -197,7 +212,7 @@
         //    type: "GET",
         //    url: "../Incidents/Create",
         //    dataType: "text",
-        //    data:  {JsonStr : data}, 
+        //    data:  {JsonStr : data},
         //    success: function(data){
         //        window.location.href = "../Incidents/Create"
         //    },
@@ -205,14 +220,14 @@
         //    alert(xhr.status);
         //    }
         //})
-            
+
         //    .done(function () {
         //    window.location.href = "../Incidents/Create"
         //})
-        
+
     }
 
-    
+
 
     function getDatatotheController(result) {
         var mode = result

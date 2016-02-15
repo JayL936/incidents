@@ -36,13 +36,13 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Incidents/Create
-        public ActionResult Create(string JsonStr)
+        public ActionResult Create()
         {
             Incident newIncident = new Incident();
             newIncident.AddDate = DateTime.Today.Date;
             newIncident.DateOfIncident = DateTime.Today.Date;
             newIncident.TimeOfIncident = DateTime.Today.TimeOfDay;
-            newIncident.Address = JsonStr;
+            
 
             return this.View(newIncident);
         }
