@@ -21,5 +21,7 @@ namespace WebApplication1.Models
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
         }
+
+        public System.Data.Entity.DbSet<WebApplication1.Models.IncidentType> IncidentTypes { get; set; }
     }
 }

@@ -27,16 +27,6 @@
         };
         map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
         geocoder = new google.maps.Geocoder;
-
-        @*@foreach (var item in Model) {
-        <text>
-        counter++;
-        var lat = @item.Lat.ToString().Replace(",", ".");
-        var long = @item.Long.ToString().Replace(",", ".");
-            var latLng = new google.maps.LatLng(lat, long);
-            placedbMarker(latLng);
-        </text>
-        }*@
         counter++;
 
         markerCluster = new MarkerClusterer(map, markers);
@@ -111,7 +101,7 @@
                 address[1] = address[1].slice(7);
             }
             else {
-                zip = "00-000";
+                zip = "XX-XXX";
             }
 
             document.getElementById('@Html.IdFor(model => model.Address)').value = address[0].trim();
@@ -246,8 +236,8 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control" } })
-                   
+                    @Html.DropDownList("Types", ViewData["Types"] as List<SelectListItem>, htmlAttributes: new { @class = "form-control"}) 
+                    @Html.ActionLink("Add new", "Create", "IncidentTypes")
                     @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
                 </div>
             </div>

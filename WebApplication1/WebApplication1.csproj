@@ -162,6 +162,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IncidentsController.cs" />
+    <Compile Include="Controllers\IncidentTypesController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="DoubleModelBinder.cs" />
     <Compile Include="Global.asax.cs">
@@ -172,6 +173,7 @@
     <Compile Include="Models\ContextSeed.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Incident.cs" />
+    <Compile Include="Models\IncidentType.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -237,6 +239,11 @@
     <Content Include="Views\Incidents\Details.cshtml" />
     <Content Include="Views\Incidents\Edit.cshtml" />
     <Content Include="Views\Incidents\Index.cshtml" />
+    <Content Include="Views\IncidentTypes\Create.cshtml" />
+    <Content Include="Views\IncidentTypes\Delete.cshtml" />
+    <Content Include="Views\IncidentTypes\Details.cshtml" />
+    <Content Include="Views\IncidentTypes\Edit.cshtml" />
+    <Content Include="Views\IncidentTypes\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -42,7 +42,13 @@ namespace WebApplication1.Controllers
             newIncident.AddDate = DateTime.Today.Date;
             newIncident.DateOfIncident = DateTime.Today.Date;
             newIncident.TimeOfIncident = DateTime.Today.TimeOfDay;
-            
+            List<SelectListItem> li = new List<SelectListItem>();
+            var query = from types in db.IncidentTypes select types;
+            foreach(var type in query)
+            {
+                li.Add(new SelectListItem { Text = type.Name, Value = type.Name });
+            }
+            ViewData["Types"] = li;
 
             return this.View(newIncident);
         }
@@ -63,10 +69,11 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long,Address,City,ZipCode")] Incident incident)
+        public ActionResult Create([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,About,Lat,Long,Address,City,ZipCode")] Incident incident, string Types)
         {
             if (ModelState.IsValid)
             {
+                incident.Type = Types;
                 db.Incidents.Add(incident);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -89,6 +96,13 @@ namespace WebApplication1.Controllers
             {
                 return HttpNotFound();
             }
+            List<SelectListItem> li = new List<SelectListItem>();
+            var query = from types in db.IncidentTypes select types;
+            foreach (var type in query)
+            {
+                li.Add(new SelectListItem { Text = type.Name, Value = type.Name });
+            }
+            ViewData["Types"] = li;
             return View(incident);
         }
 
@@ -97,10 +111,11 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long,Address,City,ZipCode")] Incident incident)
+        public ActionResult Edit([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,About,Lat,Long,Address,City,ZipCode")] Incident incident, string Types)
         {
             if (ModelState.IsValid)
             {
+                incident.Type = Types;
                 db.Entry(incident).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
