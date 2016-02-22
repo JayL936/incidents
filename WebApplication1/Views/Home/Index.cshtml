@@ -43,8 +43,41 @@
         markerCluster = new MarkerClusterer(map, markers);
         google.maps.event.addListener(map, 'click', function (event) {
             placeMarker(event.latLng);
+        });  
+        google.maps.event.addListener(map, 'rightclick', function (event) {
+            showPolygons(event.latLng);
         });
+    }
 
+    function showPolygons(location) {
+        var triangleCoords = [
+            {lat: location.lat(), lng: location.lng()},
+            {lat: location.lat()+0.04, lng: location.lng()+0.01},
+            {lat: location.lat()+0.02, lng: location.lng()+0.03}
+        ];
+
+        var poly = new google.maps.Polygon({
+            paths: triangleCoords,
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 3,
+            fillColor: '#FF0000',
+            fillOpacity: 0.35,
+            editable: true
+        });
+        poly.setMap(map);
+
+        google.maps.event.addListener(poly.getPath(), "set_at", function (event) {
+            var resultColor;
+            var number = 0;
+            for (var i = 0; i < markers.length; i++) 
+                if(google.maps.geometry.poly.containsLocation(markers[i].getPosition(), poly)==true) 
+                    number++;
+                
+            resultColor = (number >=1 ) ? 'green' : 'red';
+            document.getElementById("counted").innerHTML = number;
+            poly.setOptions({ fillColor: resultColor, strokeColor: resultColor, strokeOpacity: 0.8 });
+        });
     }
 
     function placedbMarker(location) {
@@ -92,6 +125,8 @@
                 editdbMarker(dbmarker.id);
             }
         });
+        
+
     }
 
     function editdbMarker(counter) {
@@ -117,6 +152,7 @@
         markerCluster = new MarkerClusterer(map, markers);
         var deleteButton = '<button id="deleteButton" data-id="' + counter + '">Delete marker</button>';
         var addButton = '<button id="addButton" data-id="' + counter + '">Add incident</button>';
+
 
         document.getElementById("lat").innerHTML = location.lat();
         document.getElementById("lng").innerHTML = location.lng();
@@ -152,8 +188,9 @@
         for (var i = 0; i < markers.length; i++) {
             if (markers[i].id == markerId) {
                 markers[i].setMap(null);
-                markers.splice(-1, 1);
-             //   markers.pop(markerId);
+                markers.splice(i, 1);
+                markerCluster.clearMarkers();
+                markerCluster = new MarkerClusterer(map, markers);
             }
         }
     }
@@ -272,7 +309,7 @@
 
 <div id="data">
     <br />
-
+    <text>Count: </text><text id="counted">0</text><br />
     <text>Address: </text><text id="address" >Choose incident.</text><br />
     <text id="date">Date: @DateTime.Now.Date.ToShortDateString()</text><br />
     <text id="time">Time: @DateTime.Now.ToShortTimeString()</text><br />
