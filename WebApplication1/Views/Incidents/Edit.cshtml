@@ -10,14 +10,11 @@
 <script type="text/javascript">
 
     var map;
-    var counter = 0;
     var markers = [];
     var marker = new google.maps.Marker;
-    var locations = [];
     var geocoder;
     var infowindow = new google.maps.InfoWindow;
-    var markerCluster;
-    var address;
+
 
     function initialize() {
         var mapProp = {
@@ -27,51 +24,17 @@
         };
         map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
         geocoder = new google.maps.Geocoder;
-        counter++;
+        var lat = document.getElementById('@Html.IdFor(model => model.Lat)').value;
+        lat = lat.replace(",", ".");
+        var long = document.getElementById('@Html.IdFor(model => model.Long)').value;
+        long = long.replace(",", ".");
+        var latLng = new google.maps.LatLng(lat, long);
+        placeMarker(latLng);
 
-        markerCluster = new MarkerClusterer(map, markers);
         google.maps.event.addListener(map, 'click', function (event) {
             placeMarker(event.latLng);
         });
 
-    }
-
-    function placedbMarker(location) {
-
-        var dbmarker = new google.maps.Marker({
-            position: location,
-            map: map,
-            id: counter
-        });
-        var address;
-
-        markers.push(dbmarker);
-
-        var deleteButton = '<button id="deleteButton" data-id="' + counter + '">Delete incident</button>';
-        var editButton = '<button id="editButton" data-id="' + counter + '">Edit incident</button>';
-
-        var data = 'Counter: ' + counter +
-            '<br>' + deleteButton +
-            ' ' + editButton;
-
-        google.maps.event.addListener(dbmarker, 'click', function (event) {
-            if (infowindow) infowindow.close();
-            infowindow = new google.maps.InfoWindow({ content: data })
-            infowindow.open(map, dbmarker);
-            reverseGeocoder(location, function (result, err) {
-                address = result;
-                infowindow.setContent(result + "<br />" + data);
-                document.getElementById("address").innerHTML = address;
-            });
-            var buttonDelete = document.getElementById('deleteButton');
-            var buttonEdit = document.getElementById('editButton');
-            buttonDelete.onclick = function () {
-                deleteMarker(marker.id);
-            };
-            buttonEdit.onclick = function () {
-                editdbMarker(geocoder, map, event.latLng);
-            }
-        });
     }
 
     function placeMarker(location) {
@@ -80,13 +43,9 @@
         marker = new google.maps.Marker({
             position: location,
             map: map,
-            id: counter
         });
-        var address;
 
         markers.push(marker);
-        var deleteButton = '<button id="deleteButton" data-id="' + counter + '">Delete marker</button>';
-        var addButton = '<button id="addButton" data-id="' + counter + '">Add incident</button>';
 
         document.getElementById('@Html.IdFor(model => model.Lat)').value = location.lat();
         document.getElementById('@Html.IdFor(model => model.Long)').value = location.lng();
@@ -109,30 +68,24 @@
             document.getElementById('@Html.IdFor(model => model.ZipCode)').value = zip.trim();
         });
 
-        var data = 'Counter: ' + counter +
-            '<br>What would you like to do?<br><br>' + deleteButton +
-            ' ' + addButton;
+        var data = "";
 
         google.maps.event.addListener(marker, 'click', function (event) {
             if (infowindow) infowindow.close();
             infowindow = new google.maps.InfoWindow({ content: data });
             infowindow.open(map, marker);
-
-            var buttonDelete = document.getElementById('deleteButton');
-            var buttonAdd = document.getElementById('addButton');
-            buttonDelete.onclick = function () {
-                deleteMarker(marker.id);
-            };
-            buttonAdd.onclick = function () {
-                addMarker(event.latLng, address);
-            }
+            reverseGeocoder(location, function (result, err) {
+                address = result;
+                infowindow.setContent(result);
+                document.getElementById("address").innerHTML = address;
+            });
         });
     }
 
     function deleteMarker(markerId) {
 
         for (var i = 0; i < markers.length; i++) {
-            if (markers[i].id === markerId) {
+            if (markers[i].id == markerId) {
                 markers[i].setMap(null);
                 markers.splice(i, 1);
             }
@@ -150,22 +103,6 @@
             } else {
                 window.alert('Geocoder failed due to: ' + status);
             }
-        });
-    }
-
-    function addMarker(location, fulladdress) {
-        document.getElementById("address").innerText = address + " udalo sie!";
-        document.getElementById("test").innerText = location + " udalo sie!";
-
-        var data = JSON.stringify(fulladdress) + JSON.stringify(location)
-        postData('/Incidents/Create', { JsonStr: data })
-
-    }
-
-    function displayLocation() {
-        var marker = new google.maps.Marker({
-            position: new google.maps.LatLng(data.Lat, data.Long),
-            map: map
         });
     }
 
@@ -239,7 +176,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("Types", ViewData["Types"] as List<SelectListItem>, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownListFor(Model => Model.Type, ViewData["Types"] as List<SelectListItem>, htmlAttributes: new { @class = "form-control" })
                 @Html.ActionLink("Add new", "Create", "IncidentTypes")
                 @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
             </div>

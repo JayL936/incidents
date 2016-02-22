@@ -1050,13 +1050,6 @@ $.extend($.validator, {
 		    return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value);   
 		},
 
-		jQuery:extend(jQuery.validator.methods, { 
-		    number: function(value, element) { 
-		        return this.optional(element) 
-                 || /^-?(?:\d+|\d{1,3}(?:\.\d{3})+)(?:[,.]\d+)?$/.test(value);
-		    }
-		}),
-
 		// http://docs.jquery.com/Plugins/Validation/Methods/digits
 		digits: function( value, element ) {
 			return this.optional(element) || /^\d+$/.test(value);
