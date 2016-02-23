@@ -31,11 +31,12 @@
 
         @foreach (var item in Model) {
         <text>
-        counter++;
         var lat = @item.Lat.ToString().Replace(",", ".");
         var long = @item.Long.ToString().Replace(",", ".");
         var latLng = new google.maps.LatLng(lat, long);
-        placedbMarker(latLng);
+        var id = @item.ID;
+        counter = (id >= counter) ? id : counter;
+        placedbMarker(latLng, id);
         </text>
         }
         counter++;
@@ -78,14 +79,19 @@
             document.getElementById("counted").innerHTML = number;
             poly.setOptions({ fillColor: resultColor, strokeColor: resultColor, strokeOpacity: 0.8 });
         });
+
+        google.maps.event.addListener(poly, "rightclick", function(event) {
+            this.setMap(null);
+        })
+
     }
 
-    function placedbMarker(location) {
+    function placedbMarker(location, markerID) {
 
         var dbmarker = new google.maps.Marker({
             position: location,
             map: map,
-            id: counter
+            id: markerID
         });
         var address;
 
@@ -102,7 +108,7 @@
             document.getElementById("address").innerHTML = address;
         });
 
-        var data = 'Counter: ' + counter +
+        var data = 'ID: ' + markerID +
             '<br>' + delButton +
             ' ' + editButton;
 
@@ -162,7 +168,7 @@
             document.getElementById("address").innerHTML = address;
         });
 
-        var data = 'Counter: ' + counter +
+        var data = 'ID: ' + counter +
             '<br>What would you like to do?<br><br>' + deleteButton +
             ' ' + addButton;
 
