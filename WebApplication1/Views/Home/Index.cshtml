@@ -5,7 +5,7 @@
     ViewBag.Title = "Home Page";
 }
 
-<script src="http://maps.googleapis.com/maps/api/js"></script>
+<script src="http://maps.googleapis.com/maps/api/js?libraries=drawing"></script>
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
 <script type="text/javascript">
@@ -41,49 +41,100 @@
         }
         counter++;
 
+        var drawingManager = new google.maps.drawing.DrawingManager({
+            drawingControl: true,
+            drawingControlOptions: {
+                position: google.maps.ControlPosition.TOP_CENTER,
+                drawingModes: [
+                  google.maps.drawing.OverlayType.CIRCLE,
+                  google.maps.drawing.OverlayType.POLYGON,
+                  google.maps.drawing.OverlayType.POLYLINE,
+                  google.maps.drawing.OverlayType.RECTANGLE
+                ]
+            },
+            markerOptions: {icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'},
+            circleOptions: {
+                //fillColor: '#ffff00',
+                //fillOpacity: 1,
+                //strokeWeight: 5,
+                clickable: true,
+                editable: true
+              //  zIndex: 1
+            },
+            polygonOptions: {
+                clickable: true,
+                editable: true
+            },
+            polylineOptions: {
+                clickable: true,
+                editable: true
+            },
+            rectangleOptions: {
+                clickable: true,
+                editable: true
+            }
+        });
+        drawingManager.setMap(map);
+
+
         markerCluster = new MarkerClusterer(map, markers);
         google.maps.event.addListener(map, 'click', function (event) {
             placeMarker(event.latLng);
         });  
-        google.maps.event.addListener(map, 'rightclick', function (event) {
-            showPolygons(event.latLng);
+
+        google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event) {
+            var figure = event.overlay;
+            if (event.type == google.maps.drawing.OverlayType.POLYGON) {
+                checkPolygon(figure);
+                google.maps.event.addListener(figure.getPath(), "set_at", function (event) {
+                    checkPolygon(figure);
+                });
+            }
+            if (event.type == google.maps.drawing.OverlayType.CIRCLE) {
+                checkRectangleOrCircle(figure);
+                google.maps.event.addListener(figure, "radius_changed", function (event) {
+                    checkRectangleOrCircle(figure);
+                });
+                google.maps.event.addListener(figure, "center_changed", function (event) {
+                    checkRectangleOrCircle(figure);
+                });
+            }
+            if (event.type == google.maps.drawing.OverlayType.RECTANGLE) {
+                checkRectangleOrCircle(figure);
+                google.maps.event.addListener(figure, "bounds_changed", function (event) {
+                    checkRectangleOrCircle(figure);
+                });
+            }
+            google.maps.event.addListener(figure, "click", function(e) {
+                figure.setMap(null);
+                document.getElementById("counted").innerHTML = 0;
+            });
         });
     }
 
-    function showPolygons(location) {
-        var triangleCoords = [
-            {lat: location.lat(), lng: location.lng()},
-            {lat: location.lat()+0.04, lng: location.lng()+0.01},
-            {lat: location.lat()+0.02, lng: location.lng()+0.03}
-        ];
-
-        var poly = new google.maps.Polygon({
-            paths: triangleCoords,
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            strokeWeight: 3,
-            fillColor: '#FF0000',
-            fillOpacity: 0.35,
-            editable: true
-        });
-        poly.setMap(map);
-
-        google.maps.event.addListener(poly.getPath(), "set_at", function (event) {
-            var resultColor;
-            var number = 0;
-            for (var i = 0; i < markers.length; i++) 
-                if(google.maps.geometry.poly.containsLocation(markers[i].getPosition(), poly)==true) 
-                    number++;
+    function checkRectangleOrCircle(figure) {
+        var bounds = figure.getBounds();
+        var resultColor;
+        var number = 0;
+        for (var i = 0; i < markers.length; i++) 
+            if(bounds.contains(markers[i].getPosition()))
+                number++;
                 
-            resultColor = (number >=1 ) ? 'green' : 'red';
-            document.getElementById("counted").innerHTML = number;
-            poly.setOptions({ fillColor: resultColor, strokeColor: resultColor, strokeOpacity: 0.8 });
-        });
+        resultColor = (number >=1 ) ? 'green' : 'red';
+        document.getElementById("counted").innerHTML = number;
+        figure.setOptions({ fillColor: resultColor, strokeColor: resultColor, strokeOpacity: 0.8 });
+    }
 
-        google.maps.event.addListener(poly, "rightclick", function(event) {
-            this.setMap(null);
-        })
-
+    function checkPolygon(polygon) {
+        var resultColor;
+        var number = 0;
+        for (var i = 0; i < markers.length; i++) 
+            if(google.maps.geometry.poly.containsLocation(markers[i].getPosition(), polygon)==true) 
+                number++;
+                
+        resultColor = (number >=1 ) ? 'green' : 'red';
+        document.getElementById("counted").innerHTML = number;
+        polygon.setOptions({ fillColor: resultColor, strokeColor: resultColor, strokeOpacity: 0.8 });
     }
 
     function placedbMarker(location, markerID) {
@@ -131,8 +182,6 @@
                 editdbMarker(dbmarker.id);
             }
         });
-        
-
     }
 
     function editdbMarker(counter) {
