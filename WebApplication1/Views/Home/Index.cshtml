@@ -138,11 +138,17 @@
     }
 
     function placedbMarker(location, markerID) {
+        var myIcon = new google.maps.MarkerImage('/Content/pictures/marker.png', 
+            new google.maps.Size(32, 32), 
+            new google.maps.Point(0,0), 
+            new google.maps.Point(0, 32));
+
 
         var dbmarker = new google.maps.Marker({
             position: location,
             map: map,
-            id: markerID
+            id: markerID,
+            icon: myIcon
         });
         var address;
 
