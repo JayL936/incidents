@@ -35,8 +35,10 @@
         var long = @item.Long.ToString().Replace(",", ".");
         var latLng = new google.maps.LatLng(lat, long);
         var id = @item.ID;
+       // var typeName = @Html.Raw(item.Type)
+        var typeName = "@item.Type.ToString()";
         counter = (id >= counter) ? id : counter;
-        placedbMarker(latLng, id);
+        placedbMarker(latLng, id, typeName);
         </text>
         }
         counter++;
@@ -59,7 +61,7 @@
                 //strokeWeight: 5,
                 clickable: true,
                 editable: true
-              //  zIndex: 1
+                //  zIndex: 1
             },
             polygonOptions: {
                 clickable: true,
@@ -80,7 +82,7 @@
         markerCluster = new MarkerClusterer(map, markers);
         google.maps.event.addListener(map, 'click', function (event) {
             placeMarker(event.latLng);
-        });  
+        });
 
         google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event) {
             var figure = event.overlay;
@@ -116,10 +118,10 @@
         var bounds = figure.getBounds();
         var resultColor;
         var number = 0;
-        for (var i = 0; i < markers.length; i++) 
+        for (var i = 0; i < markers.length; i++)
             if(bounds.contains(markers[i].getPosition()))
                 number++;
-                
+
         resultColor = (number >=1 ) ? 'green' : 'red';
         document.getElementById("counted").innerHTML = number;
         figure.setOptions({ fillColor: resultColor, strokeColor: resultColor, strokeOpacity: 0.8 });
@@ -128,21 +130,36 @@
     function checkPolygon(polygon) {
         var resultColor;
         var number = 0;
-        for (var i = 0; i < markers.length; i++) 
-            if(google.maps.geometry.poly.containsLocation(markers[i].getPosition(), polygon)==true) 
+        for (var i = 0; i < markers.length; i++)
+            if(google.maps.geometry.poly.containsLocation(markers[i].getPosition(), polygon)==true)
                 number++;
-                
+
         resultColor = (number >=1 ) ? 'green' : 'red';
         document.getElementById("counted").innerHTML = number;
         polygon.setOptions({ fillColor: resultColor, strokeColor: resultColor, strokeOpacity: 0.8 });
     }
 
-    function placedbMarker(location, markerID) {
-        var myIcon = new google.maps.MarkerImage('/Content/pictures/marker.png', 
-            new google.maps.Size(32, 32), 
-            new google.maps.Point(0,0), 
-            new google.maps.Point(0, 32));
+    function setMarkerIcon(type) {
+        var myIcon;
+        switch (type) {
+            case "Wypadek drogowy":
+                myIcon = new google.maps.MarkerImage('/Content/pictures/caraccident.png');
+                break;
+            case "Roboty drogowe":
+                myIcon = new google.maps.MarkerImage('/Content/pictures/construction.png');
+                break;
+            case "Pożar":
+                myIcon = new google.maps.MarkerImage('/Content/pictures/fire.png');
+                break;
+            default:
+                myIcon = new google.maps.MarkerImage('/Content/pictures/other.png');
+                break;
+        }
+        return myIcon;
+    }
 
+    function placedbMarker(location, markerID, type) {
+        var myIcon = setMarkerIcon(type);
 
         var dbmarker = new google.maps.Marker({
             position: location,
