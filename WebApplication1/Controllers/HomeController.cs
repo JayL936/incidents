@@ -13,6 +13,10 @@ namespace WebApplication1.Controllers
 
         public ActionResult Index()
         {
+            //var incidents = new IncidentViewModel
+            //{
+            //    incident = db.
+            //}
             return View(db.Incidents.ToList());
         }
 

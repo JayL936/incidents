@@ -41,4 +41,10 @@ namespace WebApplication1.Models
         public string ZipCode { get; set; }
 
     }
+
+    public class IncidentViewModel
+    {
+        public Incident incident { get; set; }
+        public IncidentType incidentType { get; set; }
+    }
 }

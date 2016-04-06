@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -17,15 +18,20 @@ namespace WebApplication1.Controllers
     {
         private Context db = new Context();
 
-        public void saveIconToBlob()
+        public string saveIconToBlob(HttpPostedFileBase file)
         {
+            string azurePath;
+            var fileName = Path.GetFileNameWithoutExtension(file.FileName);
+
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["StorageConnectionString"]);
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
             CloudBlobContainer container = blobClient.GetContainerReference("markericons");
-            container.CreateIfNotExists();
+            CloudBlockBlob blockBlob = container.GetBlockBlobReference(fileName);
+            blockBlob.UploadFromStream(file.InputStream);
 
-            container.SetPermissions(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
+            azurePath = String.Format("http://{0}{1}", blockBlob.Uri.DnsSafeHost, blockBlob.Uri.AbsolutePath);
 
+            return azurePath;
         }
 
         // GET: IncidentTypes
@@ -60,12 +66,17 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TypeID,Name")] IncidentType incidentType)
+        public ActionResult Create([Bind(Include = "TypeID,Name")] IncidentType incidentType, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
             {
-                db.IncidentTypes.Add(incidentType);
-                db.SaveChanges();
+                if (file != null && file.ContentLength > 0)
+                {
+                    incidentType.IconUrl = saveIconToBlob(file);
+
+                    db.IncidentTypes.Add(incidentType);
+                    db.SaveChanges();
+                }
                 return RedirectToAction("Index");
             }
 

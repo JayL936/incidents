@@ -35,8 +35,8 @@
         var long = @item.Long.ToString().Replace(",", ".");
         var latLng = new google.maps.LatLng(lat, long);
         var id = @item.ID;
-       // var typeName = @Html.Raw(item.Type)
         var typeName = "@item.Type.ToString()";
+        @*var iconUrl = @item.*@
         counter = (id >= counter) ? id : counter;
         placedbMarker(latLng, id, typeName);
         </text>

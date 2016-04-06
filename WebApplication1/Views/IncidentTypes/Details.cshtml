@@ -17,6 +17,11 @@
         <dd>
             @Html.DisplayFor(model => model.Name)
         </dd>
+        <br />
+        @if (Model.IconUrl != null)
+        {
+            <dd><img src="@Model.IconUrl" title="@Model.Name" /></dd>
+        }
 
     </dl>
 </div>
