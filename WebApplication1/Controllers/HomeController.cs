@@ -23,8 +23,13 @@ namespace WebApplication1.Controllers
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
-
-            return View();
+            var model = (from i in db.Incidents
+                         join t in db.IncidentTypes on i.TypeID equals t.TypeID
+                         select new IncidentsViewModel {
+                                 i.IncidentType.Name,
+                                 i.Type
+                             });
+            return View(db.Incidents.ToList());
         }
 
         public ActionResult Contact()

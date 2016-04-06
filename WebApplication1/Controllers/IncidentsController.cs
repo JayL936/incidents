@@ -73,6 +73,8 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
+                var query = (from t in db.IncidentTypes where t.Name.Equals(incident.Type) select t.TypeID).FirstOrDefault();
+                incident.TypeID = query;
                 db.Incidents.Add(incident);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -84,6 +86,7 @@ namespace WebApplication1.Controllers
         // GET: Incidents/Edit/5
         public ActionResult Edit(int? id)
         {
+            
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -113,6 +116,8 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long,Address,City,ZipCode")] Incident incident, string Types)
         {
+            //TO DO
+            //edycja typu musi zmieniac na odpowiednie ID typu
             if (ModelState.IsValid)
             {
                // incident.Type = Types;

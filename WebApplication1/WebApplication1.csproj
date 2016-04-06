@@ -232,6 +232,7 @@
     <Compile Include="Models\ContextSeed.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Incident.cs" />
+    <Compile Include="Models\IncidentsViewModel.cs" />
     <Compile Include="Models\IncidentType.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 
@@ -40,11 +41,7 @@ namespace WebApplication1.Models
         [Display(Name = "Zip Code")]
         public string ZipCode { get; set; }
 
-    }
-
-    public class IncidentViewModel
-    {
-        public Incident incident { get; set; }
-        public IncidentType incidentType { get; set; }
+        public int TypeID { get; set; }
+        public virtual IncidentType IncidentType { get; set; }
     }
 }

@@ -35,10 +35,14 @@
         var long = @item.Long.ToString().Replace(",", ".");
         var latLng = new google.maps.LatLng(lat, long);
         var id = @item.ID;
-        var typeName = "@item.Type.ToString()";
-        @*var iconUrl = @item.*@
+        var incidentType = "@item.Type.ToString()";
+        @*var typeName = @item.IncidentType.Name;
+        if(incidentType == typeName)
+            var iconUrl = @item.IncidentType.IconUrl;
+        else
+            var iconUrl = "marker";*@
         counter = (id >= counter) ? id : counter;
-        placedbMarker(latLng, id, typeName);
+        placedbMarker(latLng, id, incidentType);
         </text>
         }
         counter++;
