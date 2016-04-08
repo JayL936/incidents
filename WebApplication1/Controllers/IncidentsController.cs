@@ -116,8 +116,6 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long,Address,City,ZipCode")] Incident incident, string Types)
         {
-            //TO DO
-            //edycja typu musi zmieniac na odpowiednie ID typu
             if (ModelState.IsValid)
             {
                // incident.Type = Types;
