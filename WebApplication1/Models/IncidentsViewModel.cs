@@ -7,9 +7,10 @@ namespace WebApplication1.Models
 {
     public class IncidentsViewModel
     {
-
-        public IEnumerable<Incident> Incident { get; set; }
-        public IEnumerable<IncidentType> IncidentType { get; set; }
-
+        public int ID { get; set; }
+        public string Type { get; set; }
+        public double Lat { get; set; }
+        public double Long { get; set; }
+        public string IconUrl { get; set; }
     }
 }

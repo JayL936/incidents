@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebApplication1.Models.Incident>
+﻿@model IEnumerable<WebApplication1.Models.IncidentsViewModel>
 
 @{
     ViewBag.Title = "About";
@@ -12,10 +12,10 @@
     <table class="table">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Lat)
+                @Html.DisplayNameFor(model => model.Type)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Long)
+                @Html.DisplayNameFor(model => model.IconUrl)
             </th>
         </tr>
 
@@ -23,13 +23,18 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Lat)
+                    @Html.DisplayFor(modelItem => item.Type)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Long)
+                    @if (item.IconUrl != null)
+                    {
+                        <img src="@item.IconUrl" title="@item.Type" />
+                    }
                 </td>
+               
             </tr>
         }
+
     </table>
 </div>
 

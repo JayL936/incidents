@@ -10,6 +10,7 @@ namespace WebApplication1.Controllers
     public class HomeController : Controller
     {
         Context db = new Context();
+        Context dbt = new Context();
 
         public ActionResult Index()
         {
@@ -23,13 +24,20 @@ namespace WebApplication1.Controllers
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
-            var model = (from i in db.Incidents
-                         join t in db.IncidentTypes on i.TypeID equals t.TypeID
-                         select new IncidentsViewModel {
-                                 i.IncidentType.Name,
-                                 i.Type
-                             });
-            return View(db.Incidents.ToList());
+            List<IncidentsViewModel> list = new List<IncidentsViewModel>();
+            var incidents = db.Incidents;
+            foreach(Incident i in incidents)
+            {
+                IncidentsViewModel model = new IncidentsViewModel();
+                IncidentType type = dbt.IncidentTypes.SingleOrDefault(t => t.TypeID == i.TypeID);
+                model.ID = i.ID;
+                model.Lat = i.Lat;
+                model.Long = i.Long;
+                model.Type = i.Type;
+                model.IconUrl = type.IconUrl;
+                list.Add(model);
+            }
+            return View(list);//db.Incidents.ToList());
         }
 
         public ActionResult Contact()
