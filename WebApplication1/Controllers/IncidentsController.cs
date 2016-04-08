@@ -121,6 +121,8 @@ namespace WebApplication1.Controllers
             if (ModelState.IsValid)
             {
                // incident.Type = Types;
+                var query = (from t in db.IncidentTypes where t.Name.Equals(incident.Type) select t.TypeID).FirstOrDefault();
+                incident.TypeID = query;
                 db.Entry(incident).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

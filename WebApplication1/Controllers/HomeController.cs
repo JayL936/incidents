@@ -18,26 +18,31 @@ namespace WebApplication1.Controllers
             //{
             //    incident = db.
             //}
-            return View(db.Incidents.ToList());
+            //return View(db.Incidents.ToList());
+            List<IncidentsViewModel> list = new List<IncidentsViewModel>();
+            var incidents = db.Incidents;
+            if (incidents != null)
+            {
+                foreach (Incident i in incidents)
+                {
+                    IncidentsViewModel model = new IncidentsViewModel();
+                    IncidentType type = dbt.IncidentTypes.SingleOrDefault(t => t.TypeID == i.TypeID);
+                    model.ID = i.ID;
+                    model.Lat = i.Lat;
+                    model.Long = i.Long;
+                    model.Type = i.Type;
+                    model.IconUrl = type.IconUrl;
+                    list.Add(model);
+                }
+            }
+            return View(list);
         }
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
-            List<IncidentsViewModel> list = new List<IncidentsViewModel>();
-            var incidents = db.Incidents;
-            foreach(Incident i in incidents)
-            {
-                IncidentsViewModel model = new IncidentsViewModel();
-                IncidentType type = dbt.IncidentTypes.SingleOrDefault(t => t.TypeID == i.TypeID);
-                model.ID = i.ID;
-                model.Lat = i.Lat;
-                model.Long = i.Long;
-                model.Type = i.Type;
-                model.IconUrl = type.IconUrl;
-                list.Add(model);
-            }
-            return View(list);//db.Incidents.ToList());
+            ViewBag.Message = "Legenda.";
+            
+            return View(db.IncidentTypes.ToList());//db.Incidents.ToList());
         }
 
         public ActionResult Contact()

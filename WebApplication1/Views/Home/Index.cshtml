@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebApplication1.Models.Incident>
+﻿@model IEnumerable<WebApplication1.Models.IncidentsViewModel>
 @using Newtonsoft.Json
 
 @{
@@ -36,13 +36,9 @@
         var latLng = new google.maps.LatLng(lat, long);
         var id = @item.ID;
         var incidentType = "@item.Type.ToString()";
-        @*var typeName = @item.IncidentType.Name;
-        if(incidentType == typeName)
-            var iconUrl = @item.IncidentType.IconUrl;
-        else
-            var iconUrl = "marker";*@
+        var iconUrl = "@item.IconUrl";
         counter = (id >= counter) ? id : counter;
-        placedbMarker(latLng, id, incidentType);
+        placedbMarker(latLng, id, incidentType, iconUrl);
         </text>
         }
         counter++;
@@ -162,8 +158,8 @@
         return myIcon;
     }
 
-    function placedbMarker(location, markerID, type) {
-        var myIcon = setMarkerIcon(type);
+    function placedbMarker(location, markerID, type, iconUrl) {
+        var myIcon = new google.maps.MarkerImage(iconUrl);
 
         var dbmarker = new google.maps.Marker({
             position: location,

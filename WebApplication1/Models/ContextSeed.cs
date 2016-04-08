@@ -17,7 +17,7 @@ namespace WebApplication1.Models
                     DateOfIncident=DateTime.Parse("2010-09-30"), TimeOfIncident=TimeSpan.Parse("15:30:00"), City="Warsaw", Address="Twarda 30", TypeID=1}
             };
 
-            incidents.ForEach(i => context.Incidents.Add(i));
+           // incidents.ForEach(i => context.Incidents.Add(i));
             context.SaveChanges();
         }
     }
