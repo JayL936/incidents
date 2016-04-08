@@ -309,6 +309,7 @@
     <Content Include="Views\IncidentTypes\Details.cshtml" />
     <Content Include="Views\IncidentTypes\Edit.cshtml" />
     <Content Include="Views\IncidentTypes\Index.cshtml" />
+    <Content Include="StorageConfig.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
