@@ -14,11 +14,6 @@ namespace WebApplication1.Controllers
 
         public ActionResult Index()
         {
-            //var incidents = new IncidentViewModel
-            //{
-            //    incident = db.
-            //}
-            //return View(db.Incidents.ToList());
             List<IncidentsViewModel> list = new List<IncidentsViewModel>();
             var incidents = db.Incidents;
             if (incidents != null)
@@ -28,6 +23,8 @@ namespace WebApplication1.Controllers
                     IncidentsViewModel model = new IncidentsViewModel();
                     IncidentType type = dbt.IncidentTypes.SingleOrDefault(t => t.TypeID == i.TypeID);
                     model.ID = i.ID;
+                    model.Address = i.Address;
+                    model.City = i.City;
                     model.Lat = i.Lat;
                     model.Long = i.Long;
                     model.Type = i.Type;
@@ -40,9 +37,9 @@ namespace WebApplication1.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Legenda.";
+            ViewBag.Message = "Legend.";
             
-            return View(db.IncidentTypes.ToList());//db.Incidents.ToList());
+            return View(db.IncidentTypes.ToList());
         }
 
         public ActionResult Contact()

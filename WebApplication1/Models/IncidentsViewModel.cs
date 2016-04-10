@@ -12,5 +12,7 @@ namespace WebApplication1.Models
         public double Lat { get; set; }
         public double Long { get; set; }
         public string IconUrl { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
     }
 }
