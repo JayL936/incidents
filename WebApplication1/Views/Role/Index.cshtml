@@ -3,22 +3,28 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Available Roles For Application</h2>
+<h2>Available Roles</h2>
 
-@Html.ActionLink("Create Role", "Create", "Role")
+<p>
+    @Html.ActionLink("Create Role", "Create", "Role")
+</p>
 
-<table id="tbrole" class="table">
+<table class="table">
     <tr>
         <th>
             Role Name
         </th>
+        <th></th>
     </tr>
     @foreach (var item in Model)
     {
         <tr>
-            <th>
-                @item.Name
-            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                <span onclick="return confirm('Are you sure to delete?')"><a href="/Role/Delete?RoleName=@item.Name" class="delLink">Delete</a></span>
+            </td>
         </tr>
     }
 </table>
