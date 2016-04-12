@@ -13,7 +13,6 @@ namespace WebApplication1.Controllers
     public class RoleController : Controller
     {
         ApplicationDbContext context;
-        ApplicationDbContext userContext;
 
         public RoleController()
         {
@@ -21,12 +20,14 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Role
+        [Authorize(Roles="Admin")]
         public ActionResult Index()
         {
             var Roles = context.Roles.ToList();
             return View(Roles);
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             var Role = new IdentityRole();
@@ -34,6 +35,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(IdentityRole Role)
         {
             context.Roles.Add(Role);
@@ -41,6 +43,7 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(string RoleName)
         {
             var thisRole = context.Roles.Where(r => r.Name.Equals(RoleName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
@@ -49,6 +52,7 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult ManageUserRoles()
         {
             PopulateUsersAndRoles();
@@ -57,6 +61,7 @@ namespace WebApplication1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult AddRoleToUser(string UserName, string RoleName)
         {
             var store = new UserStore<ApplicationUser>(context);
@@ -78,6 +83,7 @@ namespace WebApplication1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult GetRoles(string UserName)
         {
             if (!string.IsNullOrWhiteSpace(UserName))
@@ -98,6 +104,7 @@ namespace WebApplication1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteUserFromRole(string UserName, string RoleName)
         {
             var store = new UserStore<ApplicationUser>(context);
