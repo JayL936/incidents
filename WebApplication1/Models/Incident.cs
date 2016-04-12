@@ -24,6 +24,7 @@ namespace WebApplication1.Models
         public TimeSpan TimeOfIncident { get; set; }
 
         public string Type { get; set; }
+        [DataType(DataType.MultilineText)]
         public string About { get; set; }
 
         [Display(Name = "Latitude")]

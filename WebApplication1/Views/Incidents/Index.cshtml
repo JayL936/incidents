@@ -3,13 +3,94 @@
 @{
     ViewBag.Title = "Index";
 }
+<script type="text/javascript" src="~/Scripts/jquery-2.2.2.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/t/dt/jq-2.2.0,dt-1.10.11,af-2.1.1,b-1.1.2,b-colvis-1.1.2,b-print-1.1.2,cr-1.3.1,fc-3.2.1,fh-3.1.1,r-2.0.2,sc-1.4.1,se-1.1.2/datatables.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/t/dt/jq-2.2.0,dt-1.10.11,af-2.1.1,b-1.1.2,b-colvis-1.1.2,b-print-1.1.2,cr-1.3.1,fc-3.2.1,fh-3.1.1,r-2.0.2,sc-1.4.1,se-1.1.2/datatables.css" />
+<script type="text/javascript">
+    $(document).ready(function () {
+        var incidents = [];
+        var data;
+        var selected = false;
+        @foreach (var item in Model)
+        {
+        <text>
+        var id = @item.ID;
+        var incidentType = "@item.Type.ToString()";
+        var street = "@item.Address";
+        var city = "@item.City";
+        var zip = "@item.ZipCode";
+        var addDate = "@item.AddDate.ToShortDateString()";
+        var incDate = "@item.DateOfIncident.ToShortDateString()";
+        var time = "@item.TimeOfIncident";
+        incidents.push([id, addDate, incDate, time, street, city, zip, incidentType]);
+        </text>
+        }
+        $('#example').DataTable({
+            data: incidents,
+            columns: [
+                { title: "ID" },
+                { title: "Add date" },
+                { title: "Incident date" },
+                { title: "Time" }, 
+                { title: "Address" },
+                { title: "City" },
+                { title: "Zip Code" },
+                { title: "Type" }
+            ],
+            dom: 'lBfrtip',
+            buttons: [
+            {
+                text: 'Edit',
+                action: function ( e, dt, node, config ) {
+                    if(selected)
+                        window.location.href = "/Incidents/Edit/" + data[0];
+                    else
+                        alert('Please select one of incidents first.');
+                }
+            },
+            {
+                text: 'Details',
+                action: function ( e, dt, node, config ) {
+                    if(selected)
+                        window.location.href = "/Incidents/Details/" + data[0];
+                    else
+                        alert('Please select one of incidents first.');
+                }
+            },
+            {
+                text: 'Delete',
+                action: function ( e, dt, node, config ) {
+                    if(selected)
+                        window.location.href = "/Incidents/Delete/" + data[0];
+                    else
+                        alert('Please select one of incidents first.');
+                }
+            }
+            ]
+        });
+
+        var table = $('#example').DataTable();
+
+        $('#example tbody').on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+                data = table.row(this).data();
+                selected = true;
+            }
+        });
+    });
+</script>
 
 <h2>Index</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
+@*<table class="table">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.AddDate)
@@ -38,38 +119,42 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.AddDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateOfIncident)
-        </td>
-        <th>
-            @Html.DisplayFor(model => item.TimeOfIncident)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => item.Address)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.City)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ZipCode)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Type)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.About)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.AddDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateOfIncident)
+            </td>
+            <th>
+                @Html.DisplayFor(model => item.TimeOfIncident)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ZipCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.About)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+    }
 
-</table>
+</table>*@
+<div class="row">
+    <table id="example" class="display" style="width:100%"></table>
+</div>

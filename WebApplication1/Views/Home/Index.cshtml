@@ -45,7 +45,7 @@
         incidents.push([id, street, city, incidentType, lat, long]);
         counter = (id >= counter) ? id : counter;
         placedbMarker(latLng, id, incidentType, iconUrl);
-        </text>   
+        </text>
         }
         counter++;
         var drawingManager = new google.maps.drawing.DrawingManager({
@@ -118,7 +118,10 @@
             });
         });
 
+        var selected = false;
+        var data;
         $('#example').DataTable( {
+            
             data: incidents,
             columns: [
                 { title: "ID" },
@@ -127,7 +130,38 @@
               //  { title: "Latitude" },
               //  { title: "Longitude" },
                 { title: "Type" }
-            ]});
+            ],
+            dom: 'lBfrtip',
+            buttons: [
+            {
+                text: 'Edit',
+                action: function ( e, dt, node, config ) {
+                    if(selected)
+                        window.location.href = "/Incidents/Edit/" + data[0];
+                    else
+                        alert('Please select one of incidents first.');
+                }
+            },
+            {
+                text: 'Details',
+                action: function ( e, dt, node, config ) {
+                    if(selected)
+                        window.location.href = "/Incidents/Details/" + data[0];
+                    else
+                        alert('Please select one of incidents first.');
+                }
+            },
+            {
+                text: 'Delete',
+                action: function ( e, dt, node, config ) {
+                    if(selected)
+                        window.location.href = "/Incidents/Delete/" + data[0];
+                    else
+                        alert('Please select one of incidents first.');
+                }
+            }
+            ]
+        });
 
         var table = $('#example').DataTable();
 
@@ -138,10 +172,10 @@
             else {
                 table.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
-                var data = table.row(this).data();
+                data = table.row(this).data();
                 var latlng = new google.maps.LatLng(data[4], data[5]);
                 map.setCenter(latlng);
-               // alert( 'You clicked on '+data[0]+'\'s row' );
+                selected = true;
             }
         } );
     }
@@ -175,25 +209,6 @@
         polygon.setOptions({ fillColor: resultColor, strokeColor: resultColor, strokeOpacity: 0.8 });
     }
 
-    function setMarkerIcon(type) {
-        var myIcon;
-        switch (type) {
-            case "Wypadek drogowy":
-                myIcon = new google.maps.MarkerImage('/Content/pictures/caraccident.png');
-                break;
-            case "Roboty drogowe":
-                myIcon = new google.maps.MarkerImage('/Content/pictures/construction.png');
-                break;
-            case "Pożar":
-                myIcon = new google.maps.MarkerImage('/Content/pictures/fire.png');
-                break;
-            default:
-                myIcon = new google.maps.MarkerImage('/Content/pictures/other.png');
-                break;
-        }
-        return myIcon;
-    }
-
     function placedbMarker(location, markerID, type, iconUrl) {
         var myIcon = new google.maps.MarkerImage(iconUrl);
 
@@ -213,10 +228,10 @@
         document.getElementById("lat").innerHTML = location.lat();
         document.getElementById("lng").innerHTML = location.lng();
 
-        reverseGeocoder(location, function(result, err){
-            address = result;
-            document.getElementById("address").innerHTML = address;
-        });
+        //reverseGeocoder(location, function(result, err){
+        //    address = result;
+        //    document.getElementById("address").innerHTML = address;
+        //});
 
         var data = 'ID: ' + markerID +
             '<br>' + delButton +
@@ -265,7 +280,6 @@
         markerCluster.clearMarkers();
         markerCluster = new MarkerClusterer(map, markers);
         var deleteButton = '<button id="deleteButton" data-id="' + counter + '">Delete marker</button>';
-        var addButton = '<button id="addButton" data-id="' + counter + '">Add incident</button>';
 
 
         document.getElementById("lat").innerHTML = location.lat();
@@ -273,12 +287,11 @@
 
         reverseGeocoder(location, function(result, err){
             address = result;
-            document.getElementById("address").innerHTML = address;
+            document.getElementById('@Html.Id("address")').value = address;
         });
 
         var data = 'ID: ' + counter +
-            '<br>What would you like to do?<br><br>' + deleteButton +
-            ' ' + addButton;
+            '<br>What would you like to do?<br><br>' + deleteButton;
 
         google.maps.event.addListener(marker, 'click', function (event) {
 
@@ -287,13 +300,9 @@
             infowindow.open(map, marker);
 
             var buttonDelete = document.getElementById('deleteButton');
-            var buttonAdd = document.getElementById('addButton');
             buttonDelete.onclick = function () {
                 deleteMarker(marker.id);
             };
-            buttonAdd.onclick = function() {
-                addMarker(event.latLng, address);
-            }
         });
     }
 
@@ -346,36 +355,6 @@
         postData('/Incidents/Create', {JsonStr : data})
         window.location.href = "/Incidents/Create";
 
-        //form = document.createElement('form');
-        //for(data in allData)
-        //{
-        //    var input = document.createElement('input');
-        //    input.type = 'text';
-        //    input.name = data;
-        //    input.value = allData[data].toString();
-        //    form.appendChild(input);
-        //}
-        //form.method = 'post';
-        //form.action = 'Incidents/CreateIncident';
-        //form.submit();
-
-        //$.ajax({
-        //    type: "GET",
-        //    url: "../Incidents/Create",
-        //    dataType: "text",
-        //    data:  {JsonStr : data},
-        //    success: function(data){
-        //        window.location.href = "../Incidents/Create"
-        //    },
-        //    error: function (xhr, ajaxOptions, thrownError) {
-        //    alert(xhr.status);
-        //    }
-        //})
-
-        //    .done(function () {
-        //    window.location.href = "../Incidents/Create"
-        //})
-
     }
 
     function getDatatotheController(result) {
@@ -421,10 +400,13 @@
 
 <div id="data">
     <br />
-    <text>Count: </text><text id="counted">0</text><br />
-    <text>Address: </text><text id="address" >Choose incident.</text><br />
-
-    @Html.ActionLink("Add new incident", "Create", "Incidents")
+    <text>Count: </text><text id="counted">0</text><br /><br />
+    @using (Html.BeginForm("CreateIncident", "Incidents"))
+    {
+        @Html.TextBox("address", null, htmlAttributes: new { @id = "address", @class = "form-control", @readonly = "readonly" })
+        <br />
+        <input type="submit" value="Create Incident" class="btn btn-default" />
+    }
 </div>
 <br />
 <div class="row">
