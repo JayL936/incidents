@@ -223,6 +223,7 @@
     <Compile Include="Controllers\IncidentsController.cs" />
     <Compile Include="Controllers\IncidentTypesController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="DoubleModelBinder.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -322,6 +323,10 @@
     <Content Include="Views\IncidentTypes\Edit.cshtml" />
     <Content Include="Views\IncidentTypes\Index.cshtml" />
     <Content Include="StorageConfig.config" />
+    <Content Include="Views\Role\Index.cshtml" />
+    <Content Include="Views\Role\Create.cshtml" />
+    <Content Include="Views\Role\Delete.cshtml" />
+    <Content Include="Views\Role\ManageUserRoles.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

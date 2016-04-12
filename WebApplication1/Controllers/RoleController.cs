@@ -1,0 +1,130 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using WebApplication1.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System.Net;
+using Microsoft.AspNet.Identity;
+
+namespace WebApplication1.Controllers
+{
+    public class RoleController : Controller
+    {
+        ApplicationDbContext context;
+        ApplicationDbContext userContext;
+
+        public RoleController()
+        {
+            context = new ApplicationDbContext();
+        }
+
+        // GET: Role
+        public ActionResult Index()
+        {
+            var Roles = context.Roles.ToList();
+            return View(Roles);
+        }
+
+        public ActionResult Create()
+        {
+            var Role = new IdentityRole();
+            return View(Role);
+        }
+
+        [HttpPost]
+        public ActionResult Create(IdentityRole Role)
+        {
+            context.Roles.Add(Role);
+            context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Delete(string RoleName)
+        {
+            var thisRole = context.Roles.Where(r => r.Name.Equals(RoleName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+            context.Roles.Remove(thisRole);
+            context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult ManageUserRoles()
+        {
+            PopulateUsersAndRoles();
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddRoleToUser(string UserName, string RoleName)
+        {
+            var store = new UserStore<ApplicationUser>(context);
+            var manager = new UserManager<ApplicationUser>(store);
+            ApplicationUser user = context.Users.Where(u => u.UserName.Equals(UserName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+
+            if (!manager.IsInRole(user.Id, RoleName))
+            {
+                manager.AddToRole(user.Id, RoleName);
+                ViewBag.ResultMessage = "Role added successfully.";
+            }
+            else
+                ViewBag.ResultMessage = "User already in this role.";
+
+            PopulateUsersAndRoles();
+
+            return View("ManageUserRoles");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult GetRoles(string UserName)
+        {
+            if (!string.IsNullOrWhiteSpace(UserName))
+            {
+                var store = new UserStore<ApplicationUser>(context);
+                var manager = new UserManager<ApplicationUser>(store);
+                ApplicationUser user = context.Users.Where(u => u.UserName.Equals(UserName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+
+                ViewBag.RolesForThisUser = manager.GetRoles(user.Id);
+            }
+            else
+                ViewBag.RolesForThisUser = "User have no roles.";
+
+            PopulateUsersAndRoles();
+
+            return View("ManageUserRoles");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteUserFromRole(string UserName, string RoleName)
+        {
+            var store = new UserStore<ApplicationUser>(context);
+            var manager = new UserManager<ApplicationUser>(store);
+            ApplicationUser user = context.Users.Where(u => u.UserName.Equals(UserName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+
+            if (manager.IsInRole(user.Id, RoleName))
+            {
+                manager.RemoveFromRole(user.Id, RoleName);
+                ViewBag.ResultMessage = "Role removed for this user.";
+            }
+            else
+                ViewBag.ResultMessage = "This user doesn't belong to selected role.";
+
+            PopulateUsersAndRoles();
+
+            return View("ManageUserRoles");
+        }
+
+        public void PopulateUsersAndRoles()
+        {
+            var list = context.Roles.OrderBy(r => r.Name).ToList().Select(rr =>
+                new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+            ViewBag.Roles = list;
+            var users = context.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
+                new SelectListItem { Value = uu.UserName.ToString(), Text = uu.UserName }).ToList();
+            ViewBag.Users = users;
+        }
+    }
+}

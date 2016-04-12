@@ -44,7 +44,7 @@ namespace WebApplication1.Controllers
             newIncident.TimeOfIncident = DateTime.Today.TimeOfDay;
             List<SelectListItem> li = new List<SelectListItem>();
             var query = from types in db.IncidentTypes select types;
-            foreach(var type in query)
+            foreach (var type in query)
             {
                 li.Add(new SelectListItem { Text = type.Name, Value = type.Name });
             }
@@ -54,14 +54,45 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-      //  [ValidateAntiForgeryToken]
-        public ActionResult CreateIncident(string JsonStr)
+        //  [ValidateAntiForgeryToken]
+        public ActionResult CreateIncident(string address)
         {
+            List<SelectListItem> li = new List<SelectListItem>();
+            var query = from types in db.IncidentTypes select types;
+
+            foreach (var type in query)
+            {
+                li.Add(new SelectListItem { Text = type.Name, Value = type.Name });
+            }
+
+            ViewData["Types"] = li;
             Incident newIncident = new Incident();
-            newIncident.Address = JsonStr;
-        //   RedirectToAction("Create");
-           return View("Create", newIncident);
-            
+            newIncident.AddDate = DateTime.Today.Date;
+            newIncident.DateOfIncident = DateTime.Today.Date;
+            newIncident.TimeOfIncident = DateTime.Today.TimeOfDay;
+            if (address != "")
+            {
+                char[] separators = { ',' };
+                string[] fullAddress = address.Split(separators);
+
+
+                if (fullAddress[1].Any(char.IsDigit))
+                {
+                    newIncident.ZipCode = fullAddress[1].Substring(0, 7).Trim();
+                    newIncident.City = fullAddress[1].Substring(8).Trim();
+                }
+                else
+                {
+                    newIncident.ZipCode = "XX-XXX";
+                    newIncident.City = fullAddress[1].Trim();
+                }
+
+                newIncident.Address = fullAddress[0].Trim();
+
+
+            }
+
+            return View("Create", newIncident);
         }
 
         // POST: Incidents/Create
@@ -86,7 +117,7 @@ namespace WebApplication1.Controllers
         // GET: Incidents/Edit/5
         public ActionResult Edit(int? id)
         {
-            
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -102,9 +133,9 @@ namespace WebApplication1.Controllers
             var query = from types in db.IncidentTypes select types;
             foreach (var type in query)
             {
-                    li.Add(new SelectListItem { Text = type.Name, Value = type.Name });
+                li.Add(new SelectListItem { Text = type.Name, Value = type.Name });
             }
-     
+
             ViewData["Types"] = li;
             return View(incident);
         }
@@ -118,7 +149,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-               // incident.Type = Types;
+                // incident.Type = Types;
                 var query = (from t in db.IncidentTypes where t.Name.Equals(incident.Type) select t.TypeID).FirstOrDefault();
                 incident.TypeID = query;
                 db.Entry(incident).State = EntityState.Modified;
