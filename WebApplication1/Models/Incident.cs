@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
@@ -45,5 +46,7 @@ namespace WebApplication1.Models
 
         public int TypeID { get; set; }
         public virtual IncidentType IncidentType { get; set; }
+
+        public virtual ICollection<ServiceParticipation> ServiceParticipations { get; set; }
     }
 }

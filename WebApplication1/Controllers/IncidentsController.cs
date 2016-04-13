@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -13,6 +14,7 @@ namespace WebApplication1.Controllers
     public class IncidentsController : Controller
     {
         private Context db = new Context();
+        private ApplicationDbContext appDb = new ApplicationDbContext();
 
         // GET: Incidents
         public ActionResult Index()
@@ -38,12 +40,15 @@ namespace WebApplication1.Controllers
         // GET: Incidents/Create
         public ActionResult Create()
         {
-            Incident newIncident = new Incident();
+            IncidentsViewModel newIncident = new IncidentsViewModel();
             newIncident.AddDate = DateTime.Today.Date;
             newIncident.DateOfIncident = DateTime.Today.Date;
             newIncident.TimeOfIncident = DateTime.Today.TimeOfDay;
+            newIncident.Roles = GetRoles();
+
             List<SelectListItem> li = new List<SelectListItem>();
             var query = from types in db.IncidentTypes select types;
+
             foreach (var type in query)
             {
                 li.Add(new SelectListItem { Text = type.Name, Value = type.Name });
@@ -66,10 +71,13 @@ namespace WebApplication1.Controllers
             }
 
             ViewData["Types"] = li;
-            Incident newIncident = new Incident();
+
+            IncidentsViewModel newIncident = new IncidentsViewModel();
             newIncident.AddDate = DateTime.Today.Date;
             newIncident.DateOfIncident = DateTime.Today.Date;
             newIncident.TimeOfIncident = DateTime.Today.TimeOfDay;
+            newIncident.Roles = GetRoles();
+
             if (address != "")
             {
                 char[] separators = { ',' };
@@ -88,8 +96,6 @@ namespace WebApplication1.Controllers
                 }
 
                 newIncident.Address = fullAddress[0].Trim();
-
-
             }
 
             return View("Create", newIncident);
@@ -100,18 +106,39 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long,Address,City,ZipCode")] Incident incident)
+        public ActionResult Create([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long,Address,City,ZipCode,Roles")] IncidentsViewModel incidentView)
         {
             if (ModelState.IsValid)
             {
-                var query = (from t in db.IncidentTypes where t.Name.Equals(incident.Type) select t.TypeID).FirstOrDefault();
+                Incident incident = new Incident();
+                var query = (from t in db.IncidentTypes where t.Name.Equals(incidentView.Type) select t.TypeID).FirstOrDefault();
                 incident.TypeID = query;
-                db.Incidents.Add(incident);
+                incident.About = incidentView.About;
+                incident.AddDate = incidentView.AddDate;
+                incident.Address = incidentView.Address;
+                incident.City = incidentView.City;
+                incident.DateOfIncident = incidentView.DateOfIncident;
+                incident.Lat = incidentView.Lat;
+                incident.Long = incidentView.Long;
+                incident.TimeOfIncident = incidentView.TimeOfIncident;
+                incident.Type = incidentView.Type;
+                incident.ZipCode = incidentView.ZipCode;
+                db.Incidents.Add(incident);          
+                foreach(RoleViewModel r in incidentView.Roles)
+                {
+                    if(r.Selected == true)
+                    {
+                        ServiceParticipation part = new ServiceParticipation();
+                        part.RoleId = r.RoleId;
+                        part.IncidentId = incidentView.ID;
+                        db.ServiceParticipations.Add(part);
+                    }
+                }
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(incident);
+            return View(incidentView);
         }
 
         // GET: Incidents/Edit/5
@@ -192,6 +219,26 @@ namespace WebApplication1.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public List<RoleViewModel> GetRoles()
+        {
+            List<RoleViewModel> list = new List<RoleViewModel>();
+            var roles = appDb.Roles;
+            if (roles != null)
+            {
+                foreach (IdentityRole r in roles)
+                {
+                    if (r.Name != "Admin")
+                    {
+                        RoleViewModel model = new RoleViewModel();
+                        model.RoleId = r.Id;
+                        model.RoleName = r.Name;
+                        list.Add(model);
+                    }
+                }
+            }
+            return list;
         }
     }
 }
