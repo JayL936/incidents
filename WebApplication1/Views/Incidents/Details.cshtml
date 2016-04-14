@@ -1,4 +1,4 @@
-﻿@model WebApplication1.Models.Incident
+﻿@model WebApplication1.Models.IncidentsViewModel
 
 @{
     ViewBag.Title = "Details";
@@ -89,6 +89,20 @@
         <dd>
             @Html.DisplayFor(model => model.Long)
         </dd>
+
+        <dt>
+            Services
+        </dt>
+        @for (var i = 0; i < Model.Roles.Count(); i++)
+        {
+            var role = Model.Roles[i];
+            if (role.Selected == true)
+            {
+                <dd>
+                    @Html.DisplayFor(model => model.Roles[i].RoleName, role.RoleName)
+                </dd>
+            }
+        }
 
     </dl>
 </div>

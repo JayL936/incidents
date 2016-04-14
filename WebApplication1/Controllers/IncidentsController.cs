@@ -30,11 +30,38 @@ namespace WebApplication1.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Incident incident = db.Incidents.Find(id);
+
             if (incident == null)
             {
                 return HttpNotFound();
             }
-            return View(incident);
+
+            IncidentsViewModel viewModel = new IncidentsViewModel();
+            viewModel.ID = incident.ID;
+            viewModel.About = incident.About;
+            viewModel.AddDate = incident.AddDate;
+            viewModel.Address = incident.Address;
+            viewModel.City = incident.City;
+            viewModel.DateOfIncident = incident.DateOfIncident;
+            viewModel.Lat = incident.Lat;
+            viewModel.Long = incident.Long;
+            viewModel.TimeOfIncident = incident.TimeOfIncident;
+            viewModel.Type = incident.Type;
+
+            var incidentRoles = (from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
+            viewModel.Roles = GetRoles();
+            foreach (RoleViewModel r in viewModel.Roles)
+            {
+                foreach (var i in incidentRoles)
+                {
+                    if (r.RoleId == i)
+                    {
+                        r.Selected = true;
+                    }
+                }
+            }
+
+            return View(viewModel);
         }
 
         // GET: Incidents/Create
@@ -245,11 +272,38 @@ namespace WebApplication1.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Incident incident = db.Incidents.Find(id);
+
             if (incident == null)
             {
                 return HttpNotFound();
             }
-            return View(incident);
+
+            IncidentsViewModel viewModel = new IncidentsViewModel();
+            viewModel.ID = incident.ID;
+            viewModel.About = incident.About;
+            viewModel.AddDate = incident.AddDate;
+            viewModel.Address = incident.Address;
+            viewModel.City = incident.City;
+            viewModel.DateOfIncident = incident.DateOfIncident;
+            viewModel.Lat = incident.Lat;
+            viewModel.Long = incident.Long;
+            viewModel.TimeOfIncident = incident.TimeOfIncident;
+            viewModel.Type = incident.Type;
+
+            var incidentRoles = (from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
+            viewModel.Roles = GetRoles();
+            foreach (RoleViewModel r in viewModel.Roles)
+            {
+                foreach (var i in incidentRoles)
+                {
+                    if (r.RoleId == i)
+                    {
+                        r.Selected = true;
+                    }
+                }
+            }
+
+            return View(viewModel);
         }
 
         // POST: Incidents/Delete/5
