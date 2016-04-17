@@ -7,6 +7,8 @@ using WebApplication1.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Net;
 using Microsoft.AspNet.Identity;
+using System.Threading.Tasks;
+using Microsoft.Owin.Security;
 
 namespace WebApplication1.Controllers
 {
@@ -71,6 +73,10 @@ namespace WebApplication1.Controllers
             if (!manager.IsInRole(user.Id, RoleName))
             {
                 manager.AddToRole(user.Id, RoleName);
+                var authenticationManager = HttpContext.GetOwinContext().Authentication;
+                authenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+                var identity = manager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                authenticationManager.SignIn(new AuthenticationProperties { IsPersistent = false }, identity);
                 ViewBag.ResultMessage = "Role added successfully.";
             }
             else
@@ -114,6 +120,10 @@ namespace WebApplication1.Controllers
             if (manager.IsInRole(user.Id, RoleName))
             {
                 manager.RemoveFromRole(user.Id, RoleName);
+                var authenticationManager = HttpContext.GetOwinContext().Authentication;
+                authenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+                var identity = manager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                authenticationManager.SignIn(new AuthenticationProperties { IsPersistent = false }, identity);
                 ViewBag.ResultMessage = "Role removed for this user.";
             }
             else

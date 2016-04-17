@@ -157,6 +157,7 @@ namespace WebApplication1.Controllers
                     {
                         ServiceParticipation part = new ServiceParticipation();
                         part.RoleId = r.RoleId;
+                        part.RoleName = r.RoleName;
                         part.IncidentId = incidentView.ID;
                         db.ServiceParticipations.Add(part);
                     }
@@ -251,6 +252,7 @@ namespace WebApplication1.Controllers
                     if (r.Selected == true)
                     {
                         ServiceParticipation part = new ServiceParticipation();
+                        part.RoleName = r.RoleName;
                         part.RoleId = r.RoleId;
                         part.IncidentId = incidentView.ID;
                        

@@ -17,6 +17,7 @@ namespace WebApplication1.Models
         public virtual Incident Incident { get; set; }
 
         public string RoleId { get; set; }
+        public string RoleName { get; set; }
      //   public virtual IdentityRole IdentityRole { get; set; }
     }
 }
