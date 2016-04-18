@@ -12,7 +12,6 @@ namespace WebApplication1.Controllers
     {
         Context db = new Context();
         Context dbt = new Context();
-        Context dbc = new Context();
 
         public ActionResult Index()
         {

@@ -14,17 +14,49 @@ namespace WebApplication1.Controllers
     public class IncidentsController : Controller
     {
         private Context db = new Context();
+        private Context dbt = new Context();
         private ApplicationDbContext appDb = new ApplicationDbContext();
 
         // GET: Incidents
         public ActionResult Index()
         {
-            return View(db.Incidents.ToList());
+            List<IncidentsViewModel> list = new List<IncidentsViewModel>();
+            var incidents = db.Incidents;
+            if (incidents != null)
+            {
+                foreach (Incident i in incidents)
+                {
+                    var services = db.ServiceParticipations.Where(p => p.IncidentId == i.ID);
+                    foreach (var s in services)
+                    {
+                        if (User.IsInRole(s.RoleName))
+                        {
+                            IncidentsViewModel model = new IncidentsViewModel();
+                            IncidentType type = dbt.IncidentTypes.SingleOrDefault(t => t.TypeID == i.TypeID);
+                            model.ID = i.ID;
+                            model.AddDate = i.AddDate;
+                            model.DateOfIncident = i.DateOfIncident;
+                            model.TimeOfIncident = i.TimeOfIncident;
+                            model.Address = i.Address;
+                            model.City = i.City;
+                            model.Lat = i.Lat;
+                            model.Long = i.Long;
+                            model.Type = i.Type;
+                            model.IconUrl = type.IconUrl;
+                            list.Add(model);
+                            break;
+                        }
+                    }
+
+                }
+            }
+            return View(list);
         }
 
         // GET: Incidents/Details/5
         public ActionResult Details(int? id)
         {
+            bool authorized = false;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -57,11 +89,16 @@ namespace WebApplication1.Controllers
                     if (r.RoleId == i)
                     {
                         r.Selected = true;
+                        if (User.IsInRole(r.RoleName))
+                            authorized = true;
                     }
                 }
             }
 
-            return View(viewModel);
+            if (authorized)
+                return View(viewModel);
+            else
+                return RedirectToAction("Index");
         }
 
         // GET: Incidents/Create
@@ -150,14 +187,15 @@ namespace WebApplication1.Controllers
                 incident.TimeOfIncident = incidentView.TimeOfIncident;
                 incident.Type = incidentView.Type;
                 incident.ZipCode = incidentView.ZipCode;
-                db.Incidents.Add(incident);          
-                foreach(RoleViewModel r in incidentView.Roles)
+                db.Incidents.Add(incident);
+                foreach (RoleViewModel r in incidentView.Roles)
                 {
-                    if(r.Selected == true)
+                    if (r.Selected == true)
                     {
                         ServiceParticipation part = new ServiceParticipation();
+                        var role = appDb.Roles.SingleOrDefault(o => o.Id == r.RoleId);
+                        part.RoleName = role.Name;
                         part.RoleId = r.RoleId;
-                        part.RoleName = r.RoleName;
                         part.IncidentId = incidentView.ID;
                         db.ServiceParticipations.Add(part);
                     }
@@ -172,7 +210,7 @@ namespace WebApplication1.Controllers
         // GET: Incidents/Edit/5
         public ActionResult Edit(int? id)
         {
-
+            bool authorized = false;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -193,13 +231,15 @@ namespace WebApplication1.Controllers
             viewModel.Type = incident.Type;
             var incidentRoles = (from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
             viewModel.Roles = GetRoles();
-            foreach(RoleViewModel r in viewModel.Roles)
+            foreach (RoleViewModel r in viewModel.Roles)
             {
-                foreach(var i in incidentRoles)
+                foreach (var i in incidentRoles)
                 {
                     if (r.RoleId == i)
                     {
                         r.Selected = true;
+                        if (User.IsInRole(r.RoleName))
+                            authorized = true;
                     }
                 }
             }
@@ -215,7 +255,11 @@ namespace WebApplication1.Controllers
             }
 
             ViewData["Types"] = li;
-            return View(viewModel);
+
+            if (authorized)
+                return View(viewModel);
+            else
+                return RedirectToAction("Index");
         }
 
         // POST: Incidents/Edit/5
@@ -243,7 +287,7 @@ namespace WebApplication1.Controllers
                 incident.ZipCode = incidentView.ZipCode;
                 db.Entry(incident).State = EntityState.Modified;
                 var services = db.ServiceParticipations.Where(s => s.IncidentId == incidentView.ID);
-                foreach(var s in services)
+                foreach (var s in services)
                 {
                     db.ServiceParticipations.Remove(s);
                 }
@@ -252,14 +296,16 @@ namespace WebApplication1.Controllers
                     if (r.Selected == true)
                     {
                         ServiceParticipation part = new ServiceParticipation();
-                        part.RoleName = r.RoleName;
+                        var role = appDb.Roles.SingleOrDefault(o => o.Id == r.RoleId);
+                        part.RoleName = role.Name;
                         part.RoleId = r.RoleId;
                         part.IncidentId = incidentView.ID;
-                       
+
                         db.ServiceParticipations.Add(part);
+                        db.SaveChanges();
                     }
                 }
-                
+
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -269,6 +315,7 @@ namespace WebApplication1.Controllers
         // GET: Incidents/Delete/5
         public ActionResult Delete(int? id)
         {
+            bool authorized = false;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -301,11 +348,16 @@ namespace WebApplication1.Controllers
                     if (r.RoleId == i)
                     {
                         r.Selected = true;
+                        if (User.IsInRole(r.RoleName))
+                            authorized = true;
                     }
                 }
             }
 
-            return View(viewModel);
+            if (authorized)
+                return View(viewModel);
+            else
+                return RedirectToAction("Index");
         }
 
         // POST: Incidents/Delete/5
