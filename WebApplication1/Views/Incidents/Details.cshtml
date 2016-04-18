@@ -9,6 +9,7 @@
 <div>
     <h4>Incident</h4>
     <hr />
+
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.AddDate)
@@ -104,6 +105,16 @@
             }
         }
 
+        @using (Html.BeginForm("ConfirmIncident", "Incidents"))
+        {
+            if (Model.confirmed == false)
+            {
+                @Html.TextBox("id", null, htmlAttributes: new { @class = "form-control", @value = @Model.ID, style = "visibility: hidden" })
+                <dd>
+                    <input type="submit" value="Confirm" class="btn btn-default" />
+                </dd>
+            }
+        }
     </dl>
 </div>
 <p>

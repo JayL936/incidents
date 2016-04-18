@@ -39,6 +39,8 @@ namespace WebApplication1.Models
         [Display(Name = "Zip Code")]
         public string ZipCode { get; set; }
 
+        public bool confirmed { get; set; }
+
         public List<RoleViewModel> Roles { get; set; }
     }
 }

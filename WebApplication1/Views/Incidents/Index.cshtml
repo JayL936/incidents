@@ -22,7 +22,8 @@
         var addDate = "@item.AddDate.ToShortDateString()";
         var incDate = "@item.DateOfIncident.ToShortDateString()";
         var time = "@item.TimeOfIncident.ToString()";
-        incidents.push([id, addDate, incDate, time, street, city, zip, incidentType]);
+        var confirmed = "@item.confirmed";
+        incidents.push([id, addDate, incDate, time, street, city, zip, incidentType, confirmed]);
         </text>
         }
         $('#example').DataTable({
@@ -35,7 +36,8 @@
                 { title: "Address" },
                 { title: "City" },
                 { title: "Zip Code" },
-                { title: "Type" }
+                { title: "Type" },
+                { title: "Confirmed" }
             ],
             dom: 'lBfrtip',
             buttons: [
@@ -65,8 +67,15 @@
                     else
                         alert('Please select one of incidents first.');
                 }
-            }
-            ]
+            }],
+            //"fnRowCallback": function( nRow, data, iDisplayIndex, iDisplayIndexFull ) {
+            //    if ( data[8] == "False" )
+            //        data[8] = "No";
+            //    else
+            //        data[8] = "Yes";
+            //},
+            "order" : [[8, "asc"]]
+            
         });
 
         var table = $('#example').DataTable();

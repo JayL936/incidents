@@ -43,6 +43,7 @@ namespace WebApplication1.Controllers
                             model.Long = i.Long;
                             model.Type = i.Type;
                             model.IconUrl = type.IconUrl;
+                            model.confirmed = s.confirmed;
                             list.Add(model);
                             break;
                         }
@@ -80,17 +81,21 @@ namespace WebApplication1.Controllers
             viewModel.TimeOfIncident = incident.TimeOfIncident;
             viewModel.Type = incident.Type;
 
-            var incidentRoles = (from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
+            var incidentRoles = db.ServiceParticipations.Where(s => s.IncidentId == id); 
+            //(from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
             viewModel.Roles = GetRoles();
             foreach (RoleViewModel r in viewModel.Roles)
             {
                 foreach (var i in incidentRoles)
                 {
-                    if (r.RoleId == i)
+                    if (r.RoleId == i.RoleId)
                     {
                         r.Selected = true;
                         if (User.IsInRole(r.RoleName))
+                        {
                             authorized = true;
+                            viewModel.confirmed = i.confirmed;
+                        }
                     }
                 }
             }
@@ -99,6 +104,31 @@ namespace WebApplication1.Controllers
                 return View(viewModel);
             else
                 return RedirectToAction("Index");
+        }
+
+        public ActionResult ConfirmIncident(int id)
+        {
+            Incident incident = db.Incidents.Find(id);
+            if (incident == null)
+            {
+                return HttpNotFound();
+            }
+            var part = db.ServiceParticipations.Where(p => p.IncidentId == id);
+            foreach(var p in part)
+            {
+                if (User.IsInRole(p.RoleName))
+                {
+                    db.ServiceParticipations.Remove(p);
+                    ServiceParticipation sp = new ServiceParticipation();
+                    sp.IncidentId = id;
+                    sp.confirmed = true;
+                    sp.RoleId = p.RoleId;
+                    sp.RoleName = p.RoleName;
+                    db.ServiceParticipations.Add(sp);
+                }
+            }
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         // GET: Incidents/Create
@@ -197,8 +227,11 @@ namespace WebApplication1.Controllers
                         part.RoleName = role.Name;
                         part.RoleId = r.RoleId;
                         part.IncidentId = incidentView.ID;
-                        db.ServiceParticipations.Add(part);
-                        
+                        if (User.IsInRole(r.RoleName))
+                            part.confirmed = true;
+                        else
+                            part.confirmed = false;
+                        db.ServiceParticipations.Add(part);   
                     }
                 }
                 db.SaveChanges();
@@ -230,16 +263,17 @@ namespace WebApplication1.Controllers
             viewModel.Long = incident.Long;
             viewModel.TimeOfIncident = incident.TimeOfIncident;
             viewModel.Type = incident.Type;
-            var incidentRoles = (from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
+            var incidentRoles = db.ServiceParticipations.Where(s => s.IncidentId == id);
+           //     (from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
             viewModel.Roles = GetRoles();
             foreach (RoleViewModel r in viewModel.Roles)
             {
                 foreach (var i in incidentRoles)
                 {
-                    if (r.RoleId == i)
+                    if (r.RoleId == i.RoleId)
                     {
                         r.Selected = true;
-                        if (User.IsInRole(r.RoleName))
+                        if (User.IsInRole(r.RoleName) && i.confirmed == true)
                             authorized = true;
                     }
                 }
@@ -301,9 +335,12 @@ namespace WebApplication1.Controllers
                         part.RoleName = role.Name;
                         part.RoleId = r.RoleId;
                         part.IncidentId = incidentView.ID;
-
+                        if (User.IsInRole(r.RoleName))
+                            part.confirmed = true;
+                        else
+                            part.confirmed = false;
                         db.ServiceParticipations.Add(part);
-                        db.SaveChanges();
+                        //db.SaveChanges();
                     }
                 }
 
@@ -340,16 +377,17 @@ namespace WebApplication1.Controllers
             viewModel.TimeOfIncident = incident.TimeOfIncident;
             viewModel.Type = incident.Type;
 
-            var incidentRoles = (from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
+            var incidentRoles = db.ServiceParticipations.Where(s => s.IncidentId == id); 
+            //(from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
             viewModel.Roles = GetRoles();
             foreach (RoleViewModel r in viewModel.Roles)
             {
                 foreach (var i in incidentRoles)
                 {
-                    if (r.RoleId == i)
+                    if (r.RoleId == i.RoleId)
                     {
                         r.Selected = true;
-                        if (User.IsInRole(r.RoleName))
+                        if (User.IsInRole(r.RoleName) && i.confirmed == true)
                             authorized = true;
                     }
                 }
