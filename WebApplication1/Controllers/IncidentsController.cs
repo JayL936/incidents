@@ -197,8 +197,8 @@ namespace WebApplication1.Controllers
                         part.RoleName = role.Name;
                         part.RoleId = r.RoleId;
                         part.IncidentId = incidentView.ID;
-                        dbt.ServiceParticipations.Add(part);
-                        dbt.SaveChanges();
+                        db.ServiceParticipations.Add(part);
+                        
                     }
                 }
                 db.SaveChanges();
