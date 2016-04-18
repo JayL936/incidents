@@ -35,12 +35,14 @@ namespace WebApplication1.Controllers
         }
 
         // GET: IncidentTypes
+        [Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
             return View(db.IncidentTypes.ToList());
         }
 
         // GET: IncidentTypes/Details/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -56,6 +58,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: IncidentTypes/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
@@ -66,6 +69,7 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create([Bind(Include = "TypeID,Name")] IncidentType incidentType, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
@@ -84,6 +88,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: IncidentTypes/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -103,6 +108,7 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit([Bind(Include = "TypeID,Name")] IncidentType incidentType)
         {
             if (ModelState.IsValid)
@@ -115,6 +121,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: IncidentTypes/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -132,6 +139,7 @@ namespace WebApplication1.Controllers
         // POST: IncidentTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             IncidentType incidentType = db.IncidentTypes.Find(id);

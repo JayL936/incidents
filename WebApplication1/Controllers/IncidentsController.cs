@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -13,37 +14,105 @@ namespace WebApplication1.Controllers
     public class IncidentsController : Controller
     {
         private Context db = new Context();
+        private Context dbt = new Context();
+        private ApplicationDbContext appDb = new ApplicationDbContext();
 
         // GET: Incidents
         public ActionResult Index()
         {
-            return View(db.Incidents.ToList());
+            List<IncidentsViewModel> list = new List<IncidentsViewModel>();
+            var incidents = db.Incidents;
+            if (incidents != null)
+            {
+                foreach (Incident i in incidents)
+                {
+                    var services = db.ServiceParticipations.Where(p => p.IncidentId == i.ID);
+                    foreach (var s in services)
+                    {
+                        if (User.IsInRole(s.RoleName))
+                        {
+                            IncidentsViewModel model = new IncidentsViewModel();
+                            IncidentType type = dbt.IncidentTypes.SingleOrDefault(t => t.TypeID == i.TypeID);
+                            model.ID = i.ID;
+                            model.AddDate = i.AddDate;
+                            model.DateOfIncident = i.DateOfIncident;
+                            model.TimeOfIncident = i.TimeOfIncident;
+                            model.Address = i.Address;
+                            model.City = i.City;
+                            model.Lat = i.Lat;
+                            model.Long = i.Long;
+                            model.Type = i.Type;
+                            model.IconUrl = type.IconUrl;
+                            list.Add(model);
+                            break;
+                        }
+                    }
+
+                }
+            }
+            return View(list);
         }
 
         // GET: Incidents/Details/5
         public ActionResult Details(int? id)
         {
+            bool authorized = false;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Incident incident = db.Incidents.Find(id);
+
             if (incident == null)
             {
                 return HttpNotFound();
             }
-            return View(incident);
+
+            IncidentsViewModel viewModel = new IncidentsViewModel();
+            viewModel.ID = incident.ID;
+            viewModel.About = incident.About;
+            viewModel.AddDate = incident.AddDate;
+            viewModel.Address = incident.Address;
+            viewModel.City = incident.City;
+            viewModel.DateOfIncident = incident.DateOfIncident;
+            viewModel.Lat = incident.Lat;
+            viewModel.Long = incident.Long;
+            viewModel.TimeOfIncident = incident.TimeOfIncident;
+            viewModel.Type = incident.Type;
+
+            var incidentRoles = (from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
+            viewModel.Roles = GetRoles();
+            foreach (RoleViewModel r in viewModel.Roles)
+            {
+                foreach (var i in incidentRoles)
+                {
+                    if (r.RoleId == i)
+                    {
+                        r.Selected = true;
+                        if (User.IsInRole(r.RoleName))
+                            authorized = true;
+                    }
+                }
+            }
+
+            if (authorized)
+                return View(viewModel);
+            else
+                return RedirectToAction("Index");
         }
 
         // GET: Incidents/Create
         public ActionResult Create()
         {
-            Incident newIncident = new Incident();
+            IncidentsViewModel newIncident = new IncidentsViewModel();
             newIncident.AddDate = DateTime.Today.Date;
             newIncident.DateOfIncident = DateTime.Today.Date;
             newIncident.TimeOfIncident = DateTime.Today.TimeOfDay;
+            newIncident.Roles = GetRoles();
+
             List<SelectListItem> li = new List<SelectListItem>();
             var query = from types in db.IncidentTypes select types;
+
             foreach (var type in query)
             {
                 li.Add(new SelectListItem { Text = type.Name, Value = type.Name });
@@ -66,10 +135,13 @@ namespace WebApplication1.Controllers
             }
 
             ViewData["Types"] = li;
-            Incident newIncident = new Incident();
+
+            IncidentsViewModel newIncident = new IncidentsViewModel();
             newIncident.AddDate = DateTime.Today.Date;
             newIncident.DateOfIncident = DateTime.Today.Date;
             newIncident.TimeOfIncident = DateTime.Today.TimeOfDay;
+            newIncident.Roles = GetRoles();
+
             if (address != "")
             {
                 char[] separators = { ',' };
@@ -88,8 +160,6 @@ namespace WebApplication1.Controllers
                 }
 
                 newIncident.Address = fullAddress[0].Trim();
-
-
             }
 
             return View("Create", newIncident);
@@ -100,24 +170,47 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long,Address,City,ZipCode")] Incident incident)
+        public ActionResult Create([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long,Address,City,ZipCode,Roles")] IncidentsViewModel incidentView)
         {
             if (ModelState.IsValid)
             {
-                var query = (from t in db.IncidentTypes where t.Name.Equals(incident.Type) select t.TypeID).FirstOrDefault();
+                Incident incident = new Incident();
+                var query = (from t in db.IncidentTypes where t.Name.Equals(incidentView.Type) select t.TypeID).FirstOrDefault();
                 incident.TypeID = query;
+                incident.About = incidentView.About;
+                incident.AddDate = incidentView.AddDate;
+                incident.Address = incidentView.Address;
+                incident.City = incidentView.City;
+                incident.DateOfIncident = incidentView.DateOfIncident;
+                incident.Lat = incidentView.Lat;
+                incident.Long = incidentView.Long;
+                incident.TimeOfIncident = incidentView.TimeOfIncident;
+                incident.Type = incidentView.Type;
+                incident.ZipCode = incidentView.ZipCode;
                 db.Incidents.Add(incident);
+                foreach (RoleViewModel r in incidentView.Roles)
+                {
+                    if (r.Selected == true)
+                    {
+                        ServiceParticipation part = new ServiceParticipation();
+                        var role = appDb.Roles.SingleOrDefault(o => o.Id == r.RoleId);
+                        part.RoleName = role.Name;
+                        part.RoleId = r.RoleId;
+                        part.IncidentId = incidentView.ID;
+                        db.ServiceParticipations.Add(part);
+                    }
+                }
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(incident);
+            return View(incidentView);
         }
 
         // GET: Incidents/Edit/5
         public ActionResult Edit(int? id)
         {
-
+            bool authorized = false;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -125,6 +218,31 @@ namespace WebApplication1.Controllers
             Incident incident = db.Incidents.Find(id);
             incident.Lat.ToString().Replace(",", ".");
             incident.Long.ToString().Replace(",", ".");
+            IncidentsViewModel viewModel = new IncidentsViewModel();
+            viewModel.ID = incident.ID;
+            viewModel.About = incident.About;
+            viewModel.AddDate = incident.AddDate;
+            viewModel.Address = incident.Address;
+            viewModel.City = incident.City;
+            viewModel.DateOfIncident = incident.DateOfIncident;
+            viewModel.Lat = incident.Lat;
+            viewModel.Long = incident.Long;
+            viewModel.TimeOfIncident = incident.TimeOfIncident;
+            viewModel.Type = incident.Type;
+            var incidentRoles = (from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
+            viewModel.Roles = GetRoles();
+            foreach (RoleViewModel r in viewModel.Roles)
+            {
+                foreach (var i in incidentRoles)
+                {
+                    if (r.RoleId == i)
+                    {
+                        r.Selected = true;
+                        if (User.IsInRole(r.RoleName))
+                            authorized = true;
+                    }
+                }
+            }
             if (incident == null)
             {
                 return HttpNotFound();
@@ -137,7 +255,11 @@ namespace WebApplication1.Controllers
             }
 
             ViewData["Types"] = li;
-            return View(incident);
+
+            if (authorized)
+                return View(viewModel);
+            else
+                return RedirectToAction("Index");
         }
 
         // POST: Incidents/Edit/5
@@ -145,33 +267,97 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long,Address,City,ZipCode")] Incident incident, string Types)
+        public ActionResult Edit([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long,Address,City,ZipCode,Roles")] IncidentsViewModel incidentView)
         {
             if (ModelState.IsValid)
             {
-                // incident.Type = Types;
-                var query = (from t in db.IncidentTypes where t.Name.Equals(incident.Type) select t.TypeID).FirstOrDefault();
+                Incident incident = new Incident();
+                var query = (from t in db.IncidentTypes where t.Name.Equals(incidentView.Type) select t.TypeID).FirstOrDefault();
+                incident.ID = incidentView.ID;
                 incident.TypeID = query;
+                incident.About = incidentView.About;
+                incident.AddDate = incidentView.AddDate;
+                incident.Address = incidentView.Address;
+                incident.City = incidentView.City;
+                incident.DateOfIncident = incidentView.DateOfIncident;
+                incident.Lat = incidentView.Lat;
+                incident.Long = incidentView.Long;
+                incident.TimeOfIncident = incidentView.TimeOfIncident;
+                incident.Type = incidentView.Type;
+                incident.ZipCode = incidentView.ZipCode;
                 db.Entry(incident).State = EntityState.Modified;
+                var services = db.ServiceParticipations.Where(s => s.IncidentId == incidentView.ID);
+                foreach (var s in services)
+                {
+                    db.ServiceParticipations.Remove(s);
+                }
+                foreach (RoleViewModel r in incidentView.Roles)
+                {
+                    if (r.Selected == true)
+                    {
+                        ServiceParticipation part = new ServiceParticipation();
+                        var role = appDb.Roles.SingleOrDefault(o => o.Id == r.RoleId);
+                        part.RoleName = role.Name;
+                        part.RoleId = r.RoleId;
+                        part.IncidentId = incidentView.ID;
+
+                        db.ServiceParticipations.Add(part);
+                        db.SaveChanges();
+                    }
+                }
+
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(incident);
+            return View(incidentView);
         }
 
         // GET: Incidents/Delete/5
         public ActionResult Delete(int? id)
         {
+            bool authorized = false;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Incident incident = db.Incidents.Find(id);
+
             if (incident == null)
             {
                 return HttpNotFound();
             }
-            return View(incident);
+
+            IncidentsViewModel viewModel = new IncidentsViewModel();
+            viewModel.ID = incident.ID;
+            viewModel.About = incident.About;
+            viewModel.AddDate = incident.AddDate;
+            viewModel.Address = incident.Address;
+            viewModel.City = incident.City;
+            viewModel.DateOfIncident = incident.DateOfIncident;
+            viewModel.Lat = incident.Lat;
+            viewModel.Long = incident.Long;
+            viewModel.TimeOfIncident = incident.TimeOfIncident;
+            viewModel.Type = incident.Type;
+
+            var incidentRoles = (from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
+            viewModel.Roles = GetRoles();
+            foreach (RoleViewModel r in viewModel.Roles)
+            {
+                foreach (var i in incidentRoles)
+                {
+                    if (r.RoleId == i)
+                    {
+                        r.Selected = true;
+                        if (User.IsInRole(r.RoleName))
+                            authorized = true;
+                    }
+                }
+            }
+
+            if (authorized)
+                return View(viewModel);
+            else
+                return RedirectToAction("Index");
         }
 
         // POST: Incidents/Delete/5
@@ -192,6 +378,26 @@ namespace WebApplication1.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public List<RoleViewModel> GetRoles()
+        {
+            List<RoleViewModel> list = new List<RoleViewModel>();
+            var roles = appDb.Roles;
+            if (roles != null)
+            {
+                foreach (IdentityRole r in roles)
+                {
+                    if (r.Name != "Admin")
+                    {
+                        RoleViewModel model = new RoleViewModel();
+                        model.RoleId = r.Id;
+                        model.RoleName = r.Name;
+                        list.Add(model);
+                    }
+                }
+            }
+            return list;
         }
     }
 }

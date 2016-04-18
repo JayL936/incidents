@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebApplication1.Models.Incident>
+﻿@model IEnumerable<WebApplication1.Models.IncidentsViewModel>
 
 @{
     ViewBag.Title = "Index";
@@ -21,7 +21,7 @@
         var zip = "@item.ZipCode";
         var addDate = "@item.AddDate.ToShortDateString()";
         var incDate = "@item.DateOfIncident.ToShortDateString()";
-        var time = "@item.TimeOfIncident";
+        var time = "@item.TimeOfIncident.ToString()";
         incidents.push([id, addDate, incDate, time, street, city, zip, incidentType]);
         </text>
         }
