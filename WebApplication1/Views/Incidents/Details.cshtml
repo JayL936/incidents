@@ -104,17 +104,30 @@
                 </dd>
             }
         }
-
+        <br />
         @using (Html.BeginForm("ConfirmIncident", "Incidents"))
         {
             if (Model.confirmed == false)
             {
-                @Html.TextBox("id", null, htmlAttributes: new { @class = "form-control", @value = @Model.ID, style = "visibility: hidden" })
-                <dd>
+                <dt>
                     <input type="submit" value="Confirm" class="btn btn-default" />
-                </dd>
+                </dt>
+                @Html.TextBox("id", null, htmlAttributes: new { @value = @Model.ID, style = "visibility: hidden" })
             }
         }
+        <br />
+        @using (Html.BeginForm("DenyIncident", "Incidents"))
+        {
+            if (Model.confirmed == false)
+            {
+
+                <dt>
+                    <input type="submit" value="Deny" class="btn btn-default" />
+                </dt>
+                @Html.TextBox("id", null, htmlAttributes: new { @value = @Model.ID, style = "visibility: hidden" })
+            }
+        }
+        
     </dl>
 </div>
 <p>

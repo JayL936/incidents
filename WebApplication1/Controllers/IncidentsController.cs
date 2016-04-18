@@ -131,6 +131,25 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult DenyIncident(int id)
+        {
+            Incident incident = db.Incidents.Find(id);
+            if (incident == null)
+            {
+                return HttpNotFound();
+            }
+            var part = db.ServiceParticipations.Where(p => p.IncidentId == id);
+            foreach (var p in part)
+            {
+                if (User.IsInRole(p.RoleName))
+                {
+                    db.ServiceParticipations.Remove(p);
+                }
+            }
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
         // GET: Incidents/Create
         public ActionResult Create()
         {
