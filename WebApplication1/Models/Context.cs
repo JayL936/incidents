@@ -16,22 +16,10 @@ namespace WebApplication1.Models
 
         }
 
-        public DbSet<Incident> Incidents { get; set; }
-
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-
-            //modelBuilder.Entity<ServiceParticipation>()
-            //    .HasRequired(s => s.Incident)
-            //    .WithOptional()
-            //    .WillCascadeOnDelete(true);
-
-            //modelBuilder.Entity<ServiceParticipation>()
-            //    .HasRequired(s => s.IdentityRole)
-            //    .WithOptional()
-            //    .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<IdentityUserLogin>().HasKey<string>(l => l.UserId);
             modelBuilder.Entity<IdentityRole>().HasKey<string>(r => r.Id);
@@ -39,6 +27,7 @@ namespace WebApplication1.Models
             modelBuilder.Entity<ServiceParticipation>().HasKey(s => new { s.IncidentId, s.RoleId });
         }
 
+        public DbSet<Incident> Incidents { get; set; }
         public DbSet<IncidentType> IncidentTypes { get; set; }
         public DbSet<ServiceParticipation> ServiceParticipations { get; set; }
     }
