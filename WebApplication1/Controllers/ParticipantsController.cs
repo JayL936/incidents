@@ -39,11 +39,6 @@ namespace WebApplication1.Controllers
         // GET: Participants/Create
         public ActionResult Create(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
             ViewBag.pTypeID = new SelectList(db.ParticipantTypes, "pTypeID", "pTypeName");
             ViewBag.incidentID = new SelectList(db.Incidents, "ID", "ID", id);
             return View();

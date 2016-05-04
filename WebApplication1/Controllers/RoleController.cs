@@ -75,8 +75,9 @@ namespace WebApplication1.Controllers
                 manager.AddToRole(user.Id, RoleName);
                 var authenticationManager = HttpContext.GetOwinContext().Authentication;
                 authenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+
                 var identity = manager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
-                authenticationManager.SignIn(new AuthenticationProperties { IsPersistent = false }, identity);
+                authenticationManager.SignIn(new AuthenticationProperties { IsPersistent = false }, identity); //czy user faktycznie jest wylogowywany? czy tylko zmieniajacy, czyli admin?
                 ViewBag.ResultMessage = "Role added successfully.";
             }
             else

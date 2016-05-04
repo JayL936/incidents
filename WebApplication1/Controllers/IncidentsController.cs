@@ -81,6 +81,7 @@ namespace WebApplication1.Controllers
             viewModel.Long = incident.Long;
             viewModel.TimeOfIncident = incident.TimeOfIncident;
             viewModel.Type = incident.Type;
+            viewModel.Participants = db.Participants.Where(p => p.incidentID == incident.ID);
 
             var incidentRoles = db.ServiceParticipations.Where(s => s.IncidentId == id); 
             //(from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);

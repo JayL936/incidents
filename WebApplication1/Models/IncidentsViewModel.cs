@@ -42,5 +42,6 @@ namespace WebApplication1.Models
         public bool confirmed { get; set; }
 
         public List<RoleViewModel> Roles { get; set; }
+        public IQueryable<Participant> Participants { get; set; }
     }
 }

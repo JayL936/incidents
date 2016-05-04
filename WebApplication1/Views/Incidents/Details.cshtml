@@ -3,7 +3,90 @@
 @{
     ViewBag.Title = "Details";
 }
+<script type="text/javascript" src="~/Scripts/jquery-2.2.2.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/t/dt/jq-2.2.0,dt-1.10.11,af-2.1.1,b-1.1.2,b-colvis-1.1.2,b-print-1.1.2,cr-1.3.1,fc-3.2.1,fh-3.1.1,r-2.0.2,sc-1.4.1,se-1.1.2/datatables.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/t/dt/jq-2.2.0,dt-1.10.11,af-2.1.1,b-1.1.2,b-colvis-1.1.2,b-print-1.1.2,cr-1.3.1,fc-3.2.1,fh-3.1.1,r-2.0.2,sc-1.4.1,se-1.1.2/datatables.css" />
+<script type="text/javascript">
+    $(document).ready(function () {
+        var participants = [];
+        var data;
+        var selected = false;
+        @foreach (var item in Model.Participants)
+        {
+        <text>
+        var pesel = @item.PESEL;
+        var fName = "@item.FirstName";
+        var lName = "@item.LastName";
+        var birthday = "@item.DateOfBirth.ToShortDateString()";
+        var type = "@item.ParticipantType.pTypeName";
+        var incidentID = @item.incidentID;
+        participants.push([pesel, fName, lName, birthday, type, incidentID]);
+        </text>
+        }
+        $('#example').DataTable({
+            data: participants,
+            columns: [
+                { title: "PESEL" },
+                { title: "First name" },
+                { title: "Last name" },
+                { title: "Date of birth" },
+                { title: "Participation" },
+                { title: "Incident" }
+            ],
+            dom: 'lBfrtip',
+            buttons: [
+            {
+                text: 'Edit',
+                action: function ( e, dt, node, config ) {
+                    if(selected)
+                        window.location.href = "/Participants/Edit/" + data[0];
+                    else
+                        alert('Please select one of participants first.');
+                }
+            },
+            {
+                text: 'Details',
+                action: function ( e, dt, node, config ) {
+                    if(selected)
+                        window.location.href = "/Participants/Details/" + data[0];
+                    else
+                        alert('Please select one of participants first.');
+                }
+            },
+            {
+                text: 'Delete',
+                action: function ( e, dt, node, config ) {
+                    if(selected)
+                        window.location.href = "/Participants/Delete/" + data[0];
+                    else
+                        alert('Please select one of participants first.');
+                }
+            }],
+            //"fnRowCallback": function( nRow, data, iDisplayIndex, iDisplayIndexFull ) {
+            //    if ( data[8] == "False" )
+            //        data[8] = "No";
+            //    else
+            //        data[8] = "Yes";
+            //},
+           // "order" : [[8, "asc"]]
 
+        });
+
+        var table = $('#example').DataTable();
+
+        $('#example tbody').on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+                data = table.row(this).data();
+                selected = true;
+            }
+        });
+    });
+</script>
 <h2>Details</h2>
 
 <div>
@@ -130,7 +213,13 @@
         
     </dl>
 </div>
+
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Edit incident", "Edit", new { id = Model.ID }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
+<br />
+<div class="row">
+    <table id="example" class="display" style="width:100%"></table>
+</div>
+
