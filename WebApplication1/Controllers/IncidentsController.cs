@@ -39,6 +39,7 @@ namespace WebApplication1.Controllers
                             model.TimeOfIncident = i.TimeOfIncident;
                             model.Address = i.Address;
                             model.City = i.City;
+                            model.ZipCode = i.ZipCode;
                             model.Lat = i.Lat;
                             model.Long = i.Long;
                             model.Type = i.Type;
@@ -256,6 +257,16 @@ namespace WebApplication1.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
+            List<SelectListItem> li = new List<SelectListItem>();
+            var allTypes = from types in db.IncidentTypes select types;
+
+            foreach (var type in allTypes)
+            {
+                li.Add(new SelectListItem { Text = type.Name, Value = type.Name });
+            }
+
+            ViewData["Types"] = li;
 
             return View(incidentView);
         }

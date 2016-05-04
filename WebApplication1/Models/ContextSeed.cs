@@ -17,13 +17,18 @@ namespace WebApplication1.Models
 
             base.Seed(context);
 
-            var incidents = new List<Incident>
+            var participantTypes = new List<ParticipantType>
             {
-                new Incident{Type="Wypadek", Lat=52.229491, Long=21.002137, About="Incydent testowy", AddDate=DateTime.Now, 
-                    DateOfIncident=DateTime.Parse("2010-09-30"), TimeOfIncident=TimeSpan.Parse("15:30:00"), City="Warsaw", Address="Twarda 30", TypeID=1}
+                new ParticipantType { pTypeName = "Witness"},
+                new ParticipantType { pTypeName = "Victim"},
+                new ParticipantType { pTypeName = "Wounded"},
+                new ParticipantType { pTypeName = "Fatality"},
+                new ParticipantType { pTypeName = "Suspect"},
+                new ParticipantType { pTypeName = "Participant"}
+
             };
 
-            // incidents.ForEach(i => context.Incidents.Add(i));
+            participantTypes.ForEach(p => context.ParticipantTypes.Add(p));
             context.SaveChanges();
 
             SeedRoles();

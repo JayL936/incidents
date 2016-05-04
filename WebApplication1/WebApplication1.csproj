@@ -223,6 +223,8 @@
     <Compile Include="Controllers\IncidentsController.cs" />
     <Compile Include="Controllers\IncidentTypesController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ParticipantsController.cs" />
+    <Compile Include="Controllers\ParticipantTypesController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="DoubleModelBinder.cs" />
     <Compile Include="Global.asax.cs">
@@ -236,6 +238,8 @@
     <Compile Include="Models\IncidentsViewModel.cs" />
     <Compile Include="Models\IncidentType.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Participant.cs" />
+    <Compile Include="Models\ParticipantType.cs" />
     <Compile Include="Models\RoleViewModel.cs" />
     <Compile Include="Models\ServiceParticipation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -333,6 +337,16 @@
     <Content Include="Views\Role\Create.cshtml" />
     <Content Include="Views\Role\Delete.cshtml" />
     <Content Include="Views\Role\ManageUserRoles.cshtml" />
+    <Content Include="Views\ParticipantTypes\Create.cshtml" />
+    <Content Include="Views\ParticipantTypes\Delete.cshtml" />
+    <Content Include="Views\ParticipantTypes\Details.cshtml" />
+    <Content Include="Views\ParticipantTypes\Edit.cshtml" />
+    <Content Include="Views\ParticipantTypes\Index.cshtml" />
+    <Content Include="Views\Participants\Create.cshtml" />
+    <Content Include="Views\Participants\Delete.cshtml" />
+    <Content Include="Views\Participants\Details.cshtml" />
+    <Content Include="Views\Participants\Edit.cshtml" />
+    <Content Include="Views\Participants\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

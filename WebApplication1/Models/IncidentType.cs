@@ -13,7 +13,12 @@ namespace WebApplication1.Models
         [Key]
         public int TypeID { get; set; }
 
+        [Required]
         public string Name { get; set; }
+
+      //  [Required]
+        [Display(Name = "Icon")]
+        [DataType(DataType.ImageUrl)]
         public string IconUrl { get; set; }
     }
 }

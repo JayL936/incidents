@@ -4,8 +4,8 @@
     ViewBag.Title = "Create";
 }
 
-<script src="http://maps.googleapis.com/maps/api/js"></script>
-<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
+<script type="text/javascript" src="~/Scripts/jquery-2.2.2.min.js"></script>
 <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
 <script type="text/javascript">
 
@@ -22,12 +22,37 @@
     function initialize() {
         var mapProp = {
             center: new google.maps.LatLng(52.229491, 21.002137),
-            zoom: 12,
+            zoom: 13,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
         geocoder = new google.maps.Geocoder;
         counter++;
+
+        var input = document.getElementById('pac-input');
+        map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(input);
+
+        var autocomplete = new google.maps.places.Autocomplete(input);
+        autocomplete.bindTo('bounds', map);
+
+        autocomplete.addListener('place_changed', function () {
+            autocomplete.set('place', void (0));
+            var place = autocomplete.getPlace();
+            if (!place.geometry) {
+                window.alert("Autocomplete's returned place contains no geometry");
+                return;
+            }
+
+            // If the place has a geometry, then present it on a map.
+            if (place.geometry.viewport) {
+                map.fitBounds(place.geometry.viewport);
+            } else {
+                map.setCenter(place.geometry.location);
+                map.setZoom(16);  
+            }
+            placeMarker(place.geometry.location);
+
+        });
 
         address = "@Html.DisplayFor(Model => Model.Address)" + ", " + "@Html.DisplayFor(Model => Model.City)";
         if (address != ", ")
@@ -137,6 +162,10 @@
 
 <h2>Create</h2>
 <h4>Incident</h4>
+<div>
+    <input id="pac-input" class="controls" type="text"
+           placeholder="Search for location...">
+</div>
 <div id="googleMap" style="height: 500px; width: 100%"></div>
 
 

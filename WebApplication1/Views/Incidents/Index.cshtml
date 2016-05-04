@@ -67,6 +67,15 @@
                     else
                         alert('Please select one of incidents first.');
                 }
+            },
+            {
+                text: 'Participant',
+                action: function ( e, dt, node, config ) {
+                    if(selected)
+                        window.location.href = "/Participants/Create/" + data[0];
+                    else
+                        alert('Please select one of incidents first.');
+                }
             }],
             //"fnRowCallback": function( nRow, data, iDisplayIndex, iDisplayIndexFull ) {
             //    if ( data[8] == "False" )

@@ -30,5 +30,7 @@ namespace WebApplication1.Models
         public DbSet<Incident> Incidents { get; set; }
         public DbSet<IncidentType> IncidentTypes { get; set; }
         public DbSet<ServiceParticipation> ServiceParticipations { get; set; }
+        public DbSet<Participant> Participants { get; set; }
+        public DbSet<ParticipantType> ParticipantTypes { get; set; }
     }
 }
