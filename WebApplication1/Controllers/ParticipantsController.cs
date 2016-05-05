@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -13,12 +15,27 @@ namespace WebApplication1.Controllers
     public class ParticipantsController : Controller
     {
         private Context db = new Context();
+        private ApplicationDbContext context = new ApplicationDbContext();
 
         // GET: Participants
         public ActionResult Index()
         {
-            var participants = db.Participants.Include(p => p.ParticipantType);
-            return View(participants.ToList());
+            List<int> list = new List<int>();
+            var services = db.ServiceParticipations;
+            foreach (var s in services)
+            {
+                if (User.IsInRole(s.RoleName))
+                    if (!list.Contains(s.IncidentId))
+                        list.Add(s.IncidentId);
+            }
+            List<Participant> parts = new List<Participant>();
+            foreach (int id in list)
+            {
+                var participants = db.Participants.Where(p => p.incidentID == id).Include(p => p.ParticipantType);
+                foreach (var participant in participants)
+                    parts.Add(participant);
+            }
+            return View(parts);
         }
 
         // GET: Participants/Details/5
@@ -33,14 +50,35 @@ namespace WebApplication1.Controllers
             {
                 return HttpNotFound();
             }
-            return View(participant);
+            Incident incident = db.Incidents.Find(participant.incidentID);
+            var roles = db.ServiceParticipations.Where(i => i.IncidentId == incident.ID);
+            foreach (var r in roles)
+            {
+                if (User.IsInRole(r.RoleName))
+                    return View(participant);
+            }
+
+            return RedirectToAction("Index");
         }
 
         // GET: Participants/Create
         public ActionResult Create(int? id)
         {
+            List<int> list = new List<int>();
+            var services = db.ServiceParticipations;
+            foreach (var s in services)
+            {
+                if (User.IsInRole(s.RoleName))
+                    if (!list.Contains(s.IncidentId))
+                        list.Add(s.IncidentId);
+            }
+
+            if (id != null)
+                if (!list.Contains((int)id))
+                    return RedirectToAction("Index", "Incidents");
+
             ViewBag.pTypeID = new SelectList(db.ParticipantTypes, "pTypeID", "pTypeName");
-            ViewBag.incidentID = new SelectList(db.Incidents, "ID", "ID", id);
+            ViewBag.incidentID = new SelectList(list, id);
             return View();
         }
 
@@ -74,8 +112,28 @@ namespace WebApplication1.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.pTypeID = new SelectList(db.ParticipantTypes, "pTypeID", "pTypeName", participant.pTypeID);
-            return View(participant);
+            Incident incident = db.Incidents.Find(participant.incidentID);
+            List<int> list = new List<int>();
+            var services = db.ServiceParticipations;
+            foreach (var s in services)
+            {
+                if (User.IsInRole(s.RoleName))
+                    if (!list.Contains(s.IncidentId))
+                        list.Add(s.IncidentId);
+            }
+            var roles = db.ServiceParticipations.Where(i => i.IncidentId == incident.ID);
+            foreach (var r in roles)
+            {
+                if (User.IsInRole(r.RoleName))
+                {
+                    ViewBag.incidentID = new SelectList(list, id);
+                    ViewBag.pTypeID = new SelectList(db.ParticipantTypes, "pTypeID", "pTypeName", participant.pTypeID);
+                    return View(participant);
+                }
+            }
+
+            return RedirectToAction("Index");
+
         }
 
         // POST: Participants/Edit/5
@@ -83,7 +141,7 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PESEL,FirstName,LastName,About,DateOfBirth,pTypeID")] Participant participant)
+        public ActionResult Edit([Bind(Include = "PESEL,FirstName,LastName,About,DateOfBirth,pTypeID,incidentID")] Participant participant)
         {
             if (ModelState.IsValid)
             {
@@ -107,7 +165,15 @@ namespace WebApplication1.Controllers
             {
                 return HttpNotFound();
             }
-            return View(participant);
+            Incident incident = db.Incidents.Find(participant.incidentID);
+            var roles = db.ServiceParticipations.Where(i => i.IncidentId == incident.ID);
+            foreach (var r in roles)
+            {
+                if (User.IsInRole(r.RoleName))
+                    return View(participant);
+            }
+
+            return RedirectToAction("Index");
         }
 
         // POST: Participants/Delete/5
