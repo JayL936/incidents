@@ -14,8 +14,17 @@ namespace WebApplication1.Controllers
 
         public ActionResult Index()
         {
+            DateTime incidentsFromDate = DateTime.Now.AddDays(-30);
+            DateTime incidentsToDate = DateTime.Now;
+            ViewBag.endDate = incidentsToDate.ToShortDateString();
+            ViewBag.startDate = incidentsFromDate.ToShortDateString();
+
             List<IncidentsViewModel> list = new List<IncidentsViewModel>();
-            var incidents = db.Incidents;
+
+            var incidents = (from i in db.Incidents
+                             where (i.DateOfIncident >= incidentsFromDate) && (i.DateOfIncident <= incidentsToDate)
+                             select i).ToList();
+
             if (incidents != null)
             {
                 foreach (Incident i in incidents)
@@ -34,6 +43,7 @@ namespace WebApplication1.Controllers
                             model.Long = i.Long;
                             model.Type = i.Type;
                             model.IconUrl = type.IconUrl;
+                            model.AddDate = i.AddDate;
                             list.Add(model);
                             break;
                         }
@@ -42,6 +52,46 @@ namespace WebApplication1.Controllers
                 }
             }
             return View(list);
+        }
+
+        public ActionResult SetDates(string startDate, string endDate)
+        {
+            DateTime incidentsToDate = DateTime.Parse(endDate);
+            DateTime incidentsFromDate = DateTime.Parse(startDate);
+
+            List<IncidentsViewModel> list = new List<IncidentsViewModel>();
+
+            var incidents = (from i in db.Incidents
+                             where (i.DateOfIncident >= incidentsFromDate) && (i.DateOfIncident <= incidentsToDate)
+                             select i).ToList();
+
+            if (incidents != null)
+            {
+                foreach (Incident i in incidents)
+                {
+                    var services = db.ServiceParticipations.Where(p => p.IncidentId == i.ID);
+                    foreach (var s in services)
+                    {
+                        if (User.IsInRole(s.RoleName))
+                        {
+                            IncidentsViewModel model = new IncidentsViewModel();
+                            IncidentType type = dbt.IncidentTypes.SingleOrDefault(t => t.TypeID == i.TypeID);
+                            model.ID = i.ID;
+                            model.Address = i.Address;
+                            model.City = i.City;
+                            model.Lat = i.Lat;
+                            model.Long = i.Long;
+                            model.Type = i.Type;
+                            model.IconUrl = type.IconUrl;
+                            model.AddDate = i.AddDate;
+                            list.Add(model);
+                            break;
+                        }
+                    }
+
+                }
+            }
+            return View("Index", list);
         }
 
         public ActionResult About()

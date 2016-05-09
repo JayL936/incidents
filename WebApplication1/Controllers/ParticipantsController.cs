@@ -24,7 +24,7 @@ namespace WebApplication1.Controllers
             var services = db.ServiceParticipations;
             foreach (var s in services)
             {
-                if (User.IsInRole(s.RoleName))
+                if (User.IsInRole(s.RoleName) && s.confirmed == true)
                     if (!list.Contains(s.IncidentId))
                         list.Add(s.IncidentId);
             }
@@ -54,7 +54,7 @@ namespace WebApplication1.Controllers
             var roles = db.ServiceParticipations.Where(i => i.IncidentId == incident.ID);
             foreach (var r in roles)
             {
-                if (User.IsInRole(r.RoleName))
+                if (User.IsInRole(r.RoleName) && r.confirmed == true)
                     return View(participant);
             }
 
@@ -68,7 +68,7 @@ namespace WebApplication1.Controllers
             var services = db.ServiceParticipations;
             foreach (var s in services)
             {
-                if (User.IsInRole(s.RoleName))
+                if (User.IsInRole(s.RoleName) && s.confirmed == true)
                     if (!list.Contains(s.IncidentId))
                         list.Add(s.IncidentId);
             }
@@ -124,7 +124,7 @@ namespace WebApplication1.Controllers
             var roles = db.ServiceParticipations.Where(i => i.IncidentId == incident.ID);
             foreach (var r in roles)
             {
-                if (User.IsInRole(r.RoleName))
+                if (User.IsInRole(r.RoleName) && r.confirmed == true)
                 {
                     ViewBag.incidentID = new SelectList(list, id);
                     ViewBag.pTypeID = new SelectList(db.ParticipantTypes, "pTypeID", "pTypeName", participant.pTypeID);
@@ -169,7 +169,7 @@ namespace WebApplication1.Controllers
             var roles = db.ServiceParticipations.Where(i => i.IncidentId == incident.ID);
             foreach (var r in roles)
             {
-                if (User.IsInRole(r.RoleName))
+                if (User.IsInRole(r.RoleName) && r.confirmed == true)
                     return View(participant);
             }
 

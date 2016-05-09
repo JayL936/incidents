@@ -5,10 +5,14 @@
     ViewBag.Title = "Home Page";
 }
 <script type="text/javascript" src="~/Scripts/jquery-2.2.2.min.js"></script>
+<link href="~/Content/themes/base/datepicker.css" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
 <script type="text/javascript" src="https://cdn.datatables.net/t/dt/jq-2.2.0,dt-1.10.11,af-2.1.1,b-1.1.2,b-colvis-1.1.2,b-print-1.1.2,cr-1.3.1,fc-3.2.1,fh-3.1.1,r-2.0.2,sc-1.4.1,se-1.1.2/datatables.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/t/dt/jq-2.2.0,dt-1.10.11,af-2.1.1,b-1.1.2,b-colvis-1.1.2,b-print-1.1.2,cr-1.3.1,fc-3.2.1,fh-3.1.1,r-2.0.2,sc-1.4.1,se-1.1.2/datatables.css" />
 <script src="http://maps.googleapis.com/maps/api/js?libraries=drawing,places"></script>
 <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
+<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.4.js"></script>
 
 <script type="text/javascript">
 
@@ -67,7 +71,8 @@
         var iconUrl = "@item.IconUrl";
         var street = "@item.Address";
         var city = "@item.City";
-        incidents.push([id, street, city, incidentType, lat, long]);
+        var incidentDate = "@item.AddDate.ToShortDateString()"
+        incidents.push([id, street, city, incidentType, incidentDate, lat, long]);
         counter = (id >= counter) ? id : counter;
         placedbMarker(latLng, id, iconUrl);
         </text>
@@ -154,7 +159,8 @@
                 { title: "City"},
               //  { title: "Latitude" },
               //  { title: "Longitude" },
-                { title: "Type" }
+                { title: "Type" },
+                { title: "Date" }
             ],
             dom: 'lBfrtip',
             buttons: [
@@ -199,11 +205,21 @@
                 table.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
                 data = table.row(this).data();
-                var latlng = new google.maps.LatLng(data[4], data[5]);
+                var latlng = new google.maps.LatLng(data[5], data[6]);
                 map.setCenter(latlng);
                 selected = true;
             }
         } );
+
+        $(function () {
+            // This will make every element with the class "date-picker" into a DatePicker element
+            $('.date-picker').datepicker({
+                dateFormat: "yy-mm-dd",
+                showAnim: "slideDown",
+                changeMonth: true,
+                changeYear: true
+            });
+        })
     }
 
     function addIncidentToList(incident) {
@@ -418,7 +434,7 @@
 </div>
 <div id="googleMap" style="width:100%;height:600px;"></div>
 
-<div id="data">
+<div id="data" style="width: 30%; float: left">
     <br />
     <text>Count: </text><text id="counted">0</text><br /><br />
     @using (Html.BeginForm("CreateIncident", "Incidents"))
@@ -431,6 +447,26 @@
         <input id="submitButton" type="submit" value="Create Incident" class="btn btn-default" />
     }
 </div>
+<div id="dates" style="width: 30%; float: left">
+    <br />
+    @using (Html.BeginForm("SetDates", "Home"))
+    {
+        <text>
+            Showing incidents from:
+        </text>
+        @Html.TextBox("startDate", (string)ViewBag.startDate, htmlAttributes: new { @id = "startDate", @class = "date-picker form-control"})
+        <text>
+    <br />
+        to:
+        </text>
+        @Html.TextBox("endDate", (string)ViewBag.endDate, htmlAttributes: new { @id = "endtDate", @class = "date-picker form-control" })
+        <br />
+        <input id="submitButton" type="submit" value="Set dates" class="btn btn-default" />
+    }
+</div>
+<script type="text/javascript">
+   
+</script>
 <br />
 <div class="row">
     <table id="example" class="display" style="width:100%"></table>
