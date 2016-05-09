@@ -6,6 +6,9 @@
 <script type="text/javascript" src="~/Scripts/jquery-2.2.2.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/t/dt/jq-2.2.0,dt-1.10.11,af-2.1.1,b-1.1.2,b-colvis-1.1.2,b-print-1.1.2,cr-1.3.1,fc-3.2.1,fh-3.1.1,r-2.0.2,sc-1.4.1,se-1.1.2/datatables.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/t/dt/jq-2.2.0,dt-1.10.11,af-2.1.1,b-1.1.2,b-colvis-1.1.2,b-print-1.1.2,cr-1.3.1,fc-3.2.1,fh-3.1.1,r-2.0.2,sc-1.4.1,se-1.1.2/datatables.css" />
+<link rel="stylesheet" type="text/css" href="~/Content/themes/base/datepicker.css" />
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.4.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         var incidents = [];
@@ -30,9 +33,9 @@
             data: incidents,
             columns: [
                 { title: "ID" },
-                { title: "Add date" },
+                { title: "Add date", type: "date" },
                 { title: "Incident date" },
-                { title: "Time" }, 
+                { title: "Time" },
                 { title: "Address" },
                 { title: "City" },
                 { title: "Zip Code" },
@@ -84,7 +87,7 @@
             //        data[8] = "Yes";
             //},
             "order" : [[8, "asc"]]
-            
+
         });
 
         var table = $('#example').DataTable();
@@ -100,6 +103,39 @@
                 selected = true;
             }
         });
+
+        $(function () {
+            $('.date-picker').datepicker({
+                dateFormat: "yy-mm-dd",
+                showAnim: "slideDown",
+                changeMonth: true,
+                changeYear: true
+            });
+        })
+
+        $("#min").keyup ( function() { table.draw(); } );
+        $("#min").change( function() { table.draw(); } );
+        $("#max").keyup ( function() { table.draw(); } );
+        $("#max").change( function() { table.draw(); } );
+
+        $.fn.dataTable.ext.search.push( function( settings, data, dataIndex ) {
+            var min =  parseDateValue($('#min').val());
+            var max =  parseDateValue($('#max').val());
+            var evalDate = parseDateValue(data[2]);
+
+            if ( evalDate >= min && evalDate <= max) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        });
+
+        function parseDateValue(rawDate) {
+            var dateArray= rawDate.split("-");
+            var parsedDate= dateArray[2] + dateArray[0] + dateArray[1];
+            return parsedDate;
+        }
     });
 </script>
 
@@ -108,71 +144,14 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-@*<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.AddDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateOfIncident)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TimeOfIncident)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Address)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.City)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ZipCode)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Type)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.About)
-        </th>
-        <th></th>
-    </tr>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.AddDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateOfIncident)
-            </td>
-            <th>
-                @Html.DisplayFor(model => item.TimeOfIncident)
-            </th>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.City)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ZipCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.About)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
-            </td>
-        </tr>
-    }
-
-</table>*@
+<br />
+<div style="float: left">
+    Showing incidents from: <input type="text" id="min" name="min" class="form-control date-picker" style="float:left"><br />
+</div>
+<div style="float: left; margin-bottom: 2%">
+    to: <input type="text" id="max" name="max" class="form-control date-picker" style="float:left"><br />
+</div>
 <div class="row">
     <table id="example" class="display" style="width:100%"></table>
 </div>
