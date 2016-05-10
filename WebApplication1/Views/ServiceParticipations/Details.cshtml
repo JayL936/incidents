@@ -1,0 +1,33 @@
+﻿@model WebApplication1.Models.ServiceParticipation
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ServiceParticipation</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Incident.Type)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Incident.Type)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AboutParticipation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AboutParticipation)
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.IncidentId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

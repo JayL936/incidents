@@ -16,5 +16,9 @@ namespace WebApplication1.Models
         public string RoleId { get; set; }
         public string RoleName { get; set; }
         public bool confirmed { get; set; }
+
+        [Display(Name = "Additional information")]
+        [DataType(DataType.MultilineText)]
+        public string AboutParticipation { get; set; }
     }
 }

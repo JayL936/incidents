@@ -70,14 +70,7 @@
                     else
                         alert('Please select one of participants first.');
                 }
-            }],
-            //"fnRowCallback": function( nRow, data, iDisplayIndex, iDisplayIndexFull ) {
-            //    if ( data[8] == "False" )
-            //        data[8] = "No";
-            //    else
-            //        data[8] = "Yes";
-            //},
-           // "order" : [[8, "asc"]]
+            }]
 
         });
 
@@ -86,6 +79,7 @@
         $('#example tbody').on('click', 'tr', function () {
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
+                selected = false;
             }
             else {
                 table.$('tr.selected').removeClass('selected');
@@ -101,64 +95,7 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-@*<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.PESEL)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ParticipantType.pTypeName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LastName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.About)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateOfBirth)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.incidentID)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <th>
-            @Html.DisplayFor(modelItem => item.PESEL)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => item.ParticipantType.pTypeName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LastName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.About)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateOfBirth)
-        </td>
-        <th>
-            @Html.DisplayFor(modelItem => item.incidentID)
-        </th>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.PESEL }) |
-            @Html.ActionLink("Details", "Details", new { id=item.PESEL }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.PESEL })
-        </td>
-    </tr>
-}
-
-</table>*@
 <div class="row">
     <table id="example" class="display" style="width:100%"></table>
 </div>

@@ -226,6 +226,7 @@
     <Compile Include="Controllers\ParticipantsController.cs" />
     <Compile Include="Controllers\ParticipantTypesController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
+    <Compile Include="Controllers\ServiceParticipationsController.cs" />
     <Compile Include="DoubleModelBinder.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -368,6 +369,9 @@
     <Content Include="Views\Participants\Details.cshtml" />
     <Content Include="Views\Participants\Edit.cshtml" />
     <Content Include="Views\Participants\Index.cshtml" />
+    <Content Include="Views\ServiceParticipations\Details.cshtml" />
+    <Content Include="Views\ServiceParticipations\Edit.cshtml" />
+    <Content Include="Views\ServiceParticipations\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
