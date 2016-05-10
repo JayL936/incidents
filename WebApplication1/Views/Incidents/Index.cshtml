@@ -22,8 +22,8 @@
         var street = "@item.Address";
         var city = "@item.City";
         var zip = "@item.ZipCode";
-        var addDate = "@item.AddDate.ToShortDateString()";
-        var incDate = "@item.DateOfIncident.ToShortDateString()";
+        var addDate = "@item.AddDate.ToString("dd/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)";
+        var incDate = "@item.DateOfIncident.ToString("dd/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)";
         var time = "@item.TimeOfIncident.ToString()";
         var confirmed = "@item.confirmed";
         incidents.push([id, addDate, incDate, time, street, city, zip, incidentType, confirmed]);
@@ -107,7 +107,7 @@
 
         $(function () {
             $('.date-picker').datepicker({
-                dateFormat: "yy-mm-dd",
+                dateFormat: "dd/m/yy",
                 showAnim: "slideDown",
                 changeMonth: true,
                 changeYear: true
@@ -133,8 +133,8 @@
         });
 
         function parseDateValue(rawDate) {
-            var dateArray= rawDate.split("-");
-            var parsedDate= dateArray[2] + dateArray[0] + dateArray[1];
+            var dateArray= rawDate.split("/");
+            var parsedDate= dateArray[0] + dateArray[1] + dateArray[2];
             return parsedDate;
         }
     });
@@ -148,10 +148,10 @@
 
 <br />
 <div style="float: left">
-    Showing incidents from: <input type="text" id="min" name="min" class="form-control date-picker" style="float:left" value="@DateTime.Now.AddDays(-30).ToShortDateString()"><br />
+    Showing incidents from: <input type="text" id="min" name="min" class="form-control date-picker" style="float:left" value="@DateTime.Now.AddDays(-30).ToString("d/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)"><br />
 </div>
 <div style="float: left; margin-bottom: 2%">
-    to: <input type="text" id="max" name="max" class="form-control date-picker" style="float:left" value="@DateTime.Now.ToShortDateString()"><br />
+    to: <input type="text" id="max" name="max" class="form-control date-picker" style="float:left" value="@DateTime.Now.ToString("d/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)"><br />
 </div>
 <div class="row">
     <table id="example" class="display" style="width:100%"></table>

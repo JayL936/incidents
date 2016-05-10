@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -16,8 +17,8 @@ namespace WebApplication1.Controllers
         {
             DateTime incidentsFromDate = DateTime.Now.AddDays(-30);
             DateTime incidentsToDate = DateTime.Now;
-            ViewBag.endDate = incidentsToDate.ToShortDateString();
-            ViewBag.startDate = incidentsFromDate.ToShortDateString();
+            ViewBag.endDate = incidentsToDate.ToString("dd/M/yyyy", CultureInfo.InvariantCulture);
+            ViewBag.startDate = incidentsFromDate.ToString("dd/M/yyyy", CultureInfo.InvariantCulture);
 
             List<IncidentsViewModel> list = new List<IncidentsViewModel>();
 

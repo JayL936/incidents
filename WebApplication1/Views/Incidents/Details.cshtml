@@ -17,7 +17,7 @@
         var pesel = @item.PESEL;
         var fName = "@item.FirstName";
         var lName = "@item.LastName";
-        var birthday = "@item.DateOfBirth.ToShortDateString()";
+        var birthday = "@item.DateOfBirth.ToString("dd/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)";
         var type = "@item.ParticipantType.pTypeName";
         var incidentID = @item.incidentID;
         participants.push([pesel, fName, lName, birthday, type, incidentID]);

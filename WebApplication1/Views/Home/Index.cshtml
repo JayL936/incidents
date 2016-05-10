@@ -81,7 +81,7 @@
         var iconUrl = "@item.IconUrl";
         var street = "@item.Address";
         var city = "@item.City";
-        var incidentDate = "@item.AddDate.ToShortDateString()"
+        var incidentDate = "@item.AddDate.ToString("dd/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)"
 
         incidents.push([id, street, city, incidentType, incidentDate, lat, long]);
         counter = (id >= counter) ? id : counter;
@@ -220,7 +220,7 @@
 
         $(function () {
             $('.date-picker').datepicker({
-                dateFormat: "yy-mm-dd",
+                dateFormat: "dd/m/yy",
                 showAnim: "slideDown",
                 changeMonth: true,
                 changeYear: true
@@ -430,8 +430,8 @@
 <br />
 <div class="row">
     <table id="example" class="display" style="width:100%"></table>
-    <text id="date" style="visibility: hidden">Date: @DateTime.Now.Date.ToShortDateString()</text><br />
-    <text id="time" style="visibility: hidden">Time: @DateTime.Now.ToShortTimeString()</text><br />
+    <text id="date" style="visibility: hidden">Date: @DateTime.Now.Date.ToString("dd/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)</text><br />
+    <text id="time" style="visibility: hidden">Time: @DateTime.Now.ToString("dd/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)</text><br />
     <text id="lat" style="visibility: hidden"></text><br />
     <text id="lng" style="visibility: hidden"></text><br />
 </div>

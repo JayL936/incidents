@@ -41,11 +41,6 @@ namespace WebApplication1.Models
 
         public bool confirmed { get; set; }
 
-        //[DataType(DataType.Date)]
-        //public DateTime startDate { get; set; }
-        //[DataType(DataType.Date)]
-        //public DateTime endDate { get; set; }
-
         public List<RoleViewModel> Roles { get; set; }
         public IQueryable<Participant> Participants { get; set; }
     }
