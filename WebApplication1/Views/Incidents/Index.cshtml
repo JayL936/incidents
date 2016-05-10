@@ -148,10 +148,10 @@
 
 <br />
 <div style="float: left">
-    Showing incidents from: <input type="text" id="min" name="min" class="form-control date-picker" style="float:left" value="@DateTime.Now.AddDays(-30).ToString("d/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)"><br />
+    Showing incidents from: <input type="text" id="min" name="min" class="form-control date-picker" style="float:left" value="@DateTime.Now.AddDays(-30).ToString("dd/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)"><br />
 </div>
 <div style="float: left; margin-bottom: 2%">
-    to: <input type="text" id="max" name="max" class="form-control date-picker" style="float:left" value="@DateTime.Now.ToString("d/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)"><br />
+    to: <input type="text" id="max" name="max" class="form-control date-picker" style="float:left" value="@DateTime.Now.ToString("dd/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)"><br />
 </div>
 <div class="row">
     <table id="example" class="display" style="width:100%"></table>

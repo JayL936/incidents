@@ -81,7 +81,7 @@
         var iconUrl = "@item.IconUrl";
         var street = "@item.Address";
         var city = "@item.City";
-        var incidentDate = "@item.AddDate.ToString("dd/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)"
+        var incidentDate = "@item.DateOfIncident.ToString("dd/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)"
 
         incidents.push([id, street, city, incidentType, incidentDate, lat, long]);
         counter = (id >= counter) ? id : counter;

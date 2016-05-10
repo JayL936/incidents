@@ -44,7 +44,7 @@ namespace WebApplication1.Controllers
                             model.Long = i.Long;
                             model.Type = i.Type;
                             model.IconUrl = type.IconUrl;
-                            model.AddDate = i.AddDate;
+                            model.DateOfIncident = i.DateOfIncident;
                             list.Add(model);
                             break;
                         }
@@ -57,8 +57,8 @@ namespace WebApplication1.Controllers
 
         public ActionResult SetDates(string startDate, string endDate)
         {
-            DateTime incidentsToDate = DateTime.Parse(endDate);
-            DateTime incidentsFromDate = DateTime.Parse(startDate);
+            DateTime incidentsToDate = DateTime.ParseExact(endDate, "dd/M/yyyy", CultureInfo.InvariantCulture );
+            DateTime incidentsFromDate = DateTime.ParseExact(startDate, "dd/M/yyyy", CultureInfo.InvariantCulture);
 
             List<IncidentsViewModel> list = new List<IncidentsViewModel>();
 
@@ -84,7 +84,7 @@ namespace WebApplication1.Controllers
                             model.Long = i.Long;
                             model.Type = i.Type;
                             model.IconUrl = type.IconUrl;
-                            model.AddDate = i.AddDate;
+                            model.DateOfIncident = i.DateOfIncident;
                             list.Add(model);
                             break;
                         }
