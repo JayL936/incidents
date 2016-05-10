@@ -34,7 +34,7 @@
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
-        
+
         geocoder = new google.maps.Geocoder;
 
         var input = document.getElementById('pac-input');
@@ -152,7 +152,7 @@
             }
             google.maps.event.addListener(figure, "click", function(e) {
                 figure.setMap(null);
-                document.getElementById("counted").innerHTML = '';
+                document.getElementById("counted").innerHTML = 'Counted: 0';
             });
         });
 
@@ -386,12 +386,11 @@
     <input id="pac-input" class="controls" type="text"
            placeholder="Search for location...">
 </div>
-<div id="googleMap" style="width:100%;height:600px;"></div>
+<div id="googleMap" style="width:100%;height:550px;"></div>
 <div style="width: 33%; float: left">
     <button class="accordion">Create incident...</button>
     <div id="data" class="panel">
         <br />
-        <text id="counted" style="color: red"></text><br /><br />
         @using (Html.BeginForm("CreateIncident", "Incidents"))
         {
             <text>
@@ -400,6 +399,7 @@
             @Html.TextBox("address", null, htmlAttributes: new { @id = "address", @class = "form-control", @readonly = "readonly" })
             <br />
             <input id="submitButton" type="submit" value="Create Incident" class="btn btn-default" />
+            <br /><br />
         }
     </div>
 </div>
@@ -420,8 +420,12 @@
             @Html.TextBox("endDate", (string)ViewBag.endDate, htmlAttributes: new { @id = "endtDate", @class = "date-picker form-control" })
             <br />
             <input id="submitButton" type="submit" value="Set dates" class="btn btn-default" />
+            <br /><br />
         }
     </div>
+</div>
+<div style="width: 34%; float: left">
+    <label id="counted" class="accordion-like" >Draw shape to count incidents.</label><br /><br />
 </div>
 <br />
 <div class="row">

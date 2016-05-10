@@ -6816,6 +6816,16 @@ td.visible-print {
   }
 }
 
+label.accordion-like {
+background-color: #eee;
+    color: #444;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
 button.accordion {
     background-color: #eee;
     color: #444;
