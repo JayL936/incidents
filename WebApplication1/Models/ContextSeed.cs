@@ -44,7 +44,8 @@ namespace WebApplication1.Models
                 new IdentityRole{Name = "Municipal police"},
                 new IdentityRole{Name = "Fire department"},
                 new IdentityRole{Name = "City cleaning"},
-                new IdentityRole{Name = "Other"}
+                new IdentityRole{Name = "Other"},
+                new IdentityRole{Name = "Viewer"}
             };
 
             roles.ForEach(r => appContext.Roles.Add(r));

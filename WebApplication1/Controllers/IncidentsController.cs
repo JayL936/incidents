@@ -12,6 +12,7 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+    [Authorize(Roles="Admin, Emergency, City cleaning, Police, Municipal police, Fire department, Other")]
     public class IncidentsController : Controller
     {
         private Context db = new Context();
@@ -30,7 +31,7 @@ namespace WebApplication1.Controllers
                     var services = db.ServiceParticipations.Where(p => p.IncidentId == i.ID);
                     foreach (var s in services)
                     {
-                        if (User.IsInRole(s.RoleName))
+                        if (User.IsInRole(s.RoleName) || User.IsInRole("Viewer"))
                         {
                             IncidentsViewModel model = new IncidentsViewModel();
                             IncidentType type = dbt.IncidentTypes.SingleOrDefault(t => t.TypeID == i.TypeID);
@@ -460,7 +461,7 @@ namespace WebApplication1.Controllers
             {
                 foreach (IdentityRole r in roles)
                 {
-                    if (r.Name != "Admin")
+                    if (r.Name != "Admin" && r.Name != "Viewer")
                     {
                         RoleViewModel model = new RoleViewModel();
                         model.RoleId = r.Id;

@@ -8,6 +8,7 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+    
     public class HomeController : Controller
     {
         Context db = new Context();
@@ -33,7 +34,7 @@ namespace WebApplication1.Controllers
                     var services = db.ServiceParticipations.Where(p => p.IncidentId == i.ID);
                     foreach(var s in services)
                     {
-                        if(User.IsInRole(s.RoleName))
+                        if(User.IsInRole(s.RoleName) || User.IsInRole("Viewer"))
                         {
                             IncidentsViewModel model = new IncidentsViewModel();
                             IncidentType type = dbt.IncidentTypes.SingleOrDefault(t => t.TypeID == i.TypeID);

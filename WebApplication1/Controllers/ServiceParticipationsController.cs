@@ -10,6 +10,7 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+    [Authorize(Roles = "Admin, Emergency, City cleaning, Police, Municipal police, Fire department, Other")]
     public class ServiceParticipationsController : Controller
     {
         private Context db = new Context();
