@@ -159,7 +159,7 @@
         var selected = false;
         var data;
         $('#example').DataTable( {
-
+            oSearch: {"bRegex": true },
             data: incidents,
             columns: [
                 { title: "ID" },

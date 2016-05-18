@@ -24,6 +24,7 @@
         </text>
         }
         $('#example').DataTable({
+            oSearch: {"bRegex": true },
             data: participants,
             columns: [
                 { title: "PESEL" },
