@@ -12,24 +12,52 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+    /// <summary>
+    /// Kontroler konta uzytkownika.
+    /// </summary>
+    /// <seealso cref="System.Web.Mvc.Controller" />
     [Authorize]
     public class AccountController : Controller
     {
+
+        /// <summary>
+        /// The _sign in manager
+        /// </summary>
         private ApplicationSignInManager _signInManager;
+        /// <summary>
+        /// The _user manager
+        /// </summary>
         private ApplicationUserManager _userManager;
+        /// <summary>
+        /// The context
+        /// </summary>
         ApplicationDbContext context;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountController" /> class.
+        /// </summary>
         public AccountController()
         {
             context = new ApplicationDbContext();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountController" /> class.
+        /// </summary>
+        /// <param name="userManager">The user manager.</param>
+        /// <param name="signInManager">The sign in manager.</param>
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
             UserManager = userManager;
             SignInManager = signInManager;
         }
 
+        /// <summary>
+        /// Gets the sign in manager.
+        /// </summary>
+        /// <value>
+        /// The sign in manager.
+        /// </value>
         public ApplicationSignInManager SignInManager
         {
             get
@@ -42,6 +70,12 @@ namespace WebApplication1.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets the user manager.
+        /// </summary>
+        /// <value>
+        /// The user manager.
+        /// </value>
         public ApplicationUserManager UserManager
         {
             get
@@ -56,6 +90,11 @@ namespace WebApplication1.Controllers
 
         //
         // GET: /Account/Login
+        /// <summary>
+        /// Logins the specified return URL.
+        /// </summary>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns></returns>
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
@@ -69,6 +108,12 @@ namespace WebApplication1.Controllers
 
         //
         // POST: /Account/Login
+        /// <summary>
+        /// Logins the specified model.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -99,6 +144,13 @@ namespace WebApplication1.Controllers
 
         //
         // GET: /Account/VerifyCode
+        /// <summary>
+        /// Verifies the code.
+        /// </summary>
+        /// <param name="provider">The provider.</param>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <param name="rememberMe">if set to <c>true</c> [remember me].</param>
+        /// <returns></returns>
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
         {
@@ -112,6 +164,11 @@ namespace WebApplication1.Controllers
 
         //
         // POST: /Account/VerifyCode
+        /// <summary>
+        /// Verifies the code.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -142,6 +199,10 @@ namespace WebApplication1.Controllers
 
         //
         // GET: /Account/Register
+        /// <summary>
+        /// Registers this instance.
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         public ActionResult Register()
         {
@@ -150,6 +211,11 @@ namespace WebApplication1.Controllers
 
         //
         // POST: /Account/Register
+        /// <summary>
+        /// Registers the specified model.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -181,6 +247,12 @@ namespace WebApplication1.Controllers
 
         //
         // GET: /Account/ConfirmEmail
+        /// <summary>
+        /// Confirms the email.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="code">The code.</param>
+        /// <returns></returns>
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
@@ -194,6 +266,10 @@ namespace WebApplication1.Controllers
 
         //
         // GET: /Account/ForgotPassword
+        /// <summary>
+        /// Forgots the password.
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
@@ -202,6 +278,11 @@ namespace WebApplication1.Controllers
 
         //
         // POST: /Account/ForgotPassword
+        /// <summary>
+        /// Forgots the password.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -230,6 +311,10 @@ namespace WebApplication1.Controllers
 
         //
         // GET: /Account/ForgotPasswordConfirmation
+        /// <summary>
+        /// Forgots the password confirmation.
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
         {
@@ -238,6 +323,11 @@ namespace WebApplication1.Controllers
 
         //
         // GET: /Account/ResetPassword
+        /// <summary>
+        /// Resets the password.
+        /// </summary>
+        /// <param name="code">The code.</param>
+        /// <returns></returns>
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
@@ -246,6 +336,11 @@ namespace WebApplication1.Controllers
 
         //
         // POST: /Account/ResetPassword
+        /// <summary>
+        /// Resets the password.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -272,6 +367,10 @@ namespace WebApplication1.Controllers
 
         //
         // GET: /Account/ResetPasswordConfirmation
+        /// <summary>
+        /// Resets the password confirmation.
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
         {
@@ -280,6 +379,12 @@ namespace WebApplication1.Controllers
 
         //
         // POST: /Account/ExternalLogin
+        /// <summary>
+        /// Externals the login.
+        /// </summary>
+        /// <param name="provider">The provider.</param>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -291,6 +396,12 @@ namespace WebApplication1.Controllers
 
         //
         // GET: /Account/SendCode
+        /// <summary>
+        /// Sends the code.
+        /// </summary>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <param name="rememberMe">if set to <c>true</c> [remember me].</param>
+        /// <returns></returns>
         [AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
         {
@@ -306,6 +417,11 @@ namespace WebApplication1.Controllers
 
         //
         // POST: /Account/SendCode
+        /// <summary>
+        /// Sends the code.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -326,6 +442,11 @@ namespace WebApplication1.Controllers
 
         //
         // GET: /Account/ExternalLoginCallback
+        /// <summary>
+        /// Externals the login callback.
+        /// </summary>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns></returns>
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
@@ -356,6 +477,12 @@ namespace WebApplication1.Controllers
 
         //
         // POST: /Account/ExternalLoginConfirmation
+        /// <summary>
+        /// Externals the login confirmation.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -394,6 +521,10 @@ namespace WebApplication1.Controllers
 
         //
         // POST: /Account/LogOff
+        /// <summary>
+        /// Logs the off.
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
@@ -404,12 +535,20 @@ namespace WebApplication1.Controllers
 
         //
         // GET: /Account/ExternalLoginFailure
+        /// <summary>
+        /// Externals the login failure.
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure()
         {
             return View();
         }
 
+        /// <summary>
+        /// Releases unmanaged resources and optionally releases managed resources.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -432,8 +571,17 @@ namespace WebApplication1.Controllers
 
         #region Helpers
         // Used for XSRF protection when adding external logins
+        /// <summary>
+        /// The XSRF key
+        /// </summary>
         private const string XsrfKey = "XsrfId";
 
+        /// <summary>
+        /// Gets the authentication manager.
+        /// </summary>
+        /// <value>
+        /// The authentication manager.
+        /// </value>
         private IAuthenticationManager AuthenticationManager
         {
             get
@@ -442,6 +590,10 @@ namespace WebApplication1.Controllers
             }
         }
 
+        /// <summary>
+        /// Adds the errors.
+        /// </summary>
+        /// <param name="result">The result.</param>
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
@@ -450,6 +602,11 @@ namespace WebApplication1.Controllers
             }
         }
 
+        /// <summary>
+        /// Redirects to local.
+        /// </summary>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns></returns>
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -459,13 +616,28 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <seealso cref="System.Web.Mvc.HttpUnauthorizedResult" />
         internal class ChallengeResult : HttpUnauthorizedResult
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ChallengeResult"/> class.
+            /// </summary>
+            /// <param name="provider">The provider.</param>
+            /// <param name="redirectUri">The redirect URI.</param>
             public ChallengeResult(string provider, string redirectUri)
                 : this(provider, redirectUri, null)
             {
             }
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ChallengeResult"/> class.
+            /// </summary>
+            /// <param name="provider">The provider.</param>
+            /// <param name="redirectUri">The redirect URI.</param>
+            /// <param name="userId">The user identifier.</param>
             public ChallengeResult(string provider, string redirectUri, string userId)
             {
                 LoginProvider = provider;
@@ -473,10 +645,32 @@ namespace WebApplication1.Controllers
                 UserId = userId;
             }
 
+            /// <summary>
+            /// Gets or sets the login provider.
+            /// </summary>
+            /// <value>
+            /// The login provider.
+            /// </value>
             public string LoginProvider { get; set; }
+            /// <summary>
+            /// Gets or sets the redirect URI.
+            /// </summary>
+            /// <value>
+            /// The redirect URI.
+            /// </value>
             public string RedirectUri { get; set; }
+            /// <summary>
+            /// Gets or sets the user identifier.
+            /// </summary>
+            /// <value>
+            /// The user identifier.
+            /// </value>
             public string UserId { get; set; }
 
+            /// <summary>
+            /// Enables processing of the result of an action method by a custom type that inherits from the <see cref="T:System.Web.Mvc.ActionResult" /> class.
+            /// </summary>
+            /// <param name="context">The context in which the result is executed. The context information includes the controller, HTTP content, request context, and route data.</param>
             public override void ExecuteResult(ControllerContext context)
             {
                 var properties = new AuthenticationProperties { RedirectUri = RedirectUri };

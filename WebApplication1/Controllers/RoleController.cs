@@ -12,6 +12,9 @@ using Microsoft.Owin.Security;
 
 namespace WebApplication1.Controllers
 {
+    /// <summary>
+    /// Kontroler ról
+    /// </summary>
     public class RoleController : Controller
     {
         ApplicationDbContext context;
@@ -22,6 +25,10 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Role
+        /// <summary>
+        /// Wyświetlenie listy ról. Dostępne tylko dla Administratora.
+        /// </summary>
+        /// <returns>Widok z listą ról.</returns>
         [Authorize(Roles="Admin")]
         public ActionResult Index()
         {
@@ -29,6 +36,10 @@ namespace WebApplication1.Controllers
             return View(Roles);
         }
 
+        /// <summary>
+        /// Tworzenie nowej roli. Dostępne tylko dla administratora.
+        /// </summary>
+        /// <returns>Widok z nową rolą.</returns>
         [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
@@ -36,6 +47,11 @@ namespace WebApplication1.Controllers
             return View(Role);
         }
 
+        /// <summary>
+        /// Zapis nowo utworzonej roli. Dostępne tylko dla administratora.
+        /// </summary>
+        /// <param name="Role">Nowo tworzona rola.</param>
+        /// <returns>Przekierowanie do akcji widoku głównego.</returns>
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public ActionResult Create(IdentityRole Role)
@@ -45,6 +61,11 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// Usuwanie roli. Dostępne tylko dla administratora.
+        /// </summary>
+        /// <param name="RoleName">Nazwa usuwanej roli pobrana z widoku.</param>
+        /// <returns>Przekierowanie do akcji widoku głównego.</returns>
         [Authorize(Roles = "Admin")]
         public ActionResult Delete(string RoleName)
         {
@@ -54,6 +75,10 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// Widok zarządzania rolami.
+        /// </summary>
+        /// <returns>Widok zarządzania rolami.</returns>
         [Authorize(Roles = "Admin")]
         public ActionResult ManageUserRoles()
         {
@@ -61,6 +86,12 @@ namespace WebApplication1.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Dodawanie użytkownika do wybranej roli.
+        /// </summary>
+        /// <param name="UserName">Nazwa użytkownika</param>
+        /// <param name="RoleName">Nazwa roli</param>
+        /// <returns>Widok główny zarządzania rolami.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -84,6 +115,11 @@ namespace WebApplication1.Controllers
             return View("ManageUserRoles");
         }
 
+        /// <summary>
+        /// Wyświetlanie ról użytkownika.
+        /// </summary>
+        /// <param name="UserName">Nazwa użytkownika.</param>
+        /// <returns>Widok główny zarządzania rolami z elementem ViewBag zawierającym role wybranego użytkownika.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -105,6 +141,12 @@ namespace WebApplication1.Controllers
             return View("ManageUserRoles");
         }
 
+        /// <summary>
+        /// Usunięcie użytkownika z roli.
+        /// </summary>
+        /// <param name="UserName">Nazwa użytkownika.</param>
+        /// <param name="RoleName">Nazwa roli.</param>
+        /// <returns>Widok główny zarządzania rolami.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -128,6 +170,9 @@ namespace WebApplication1.Controllers
             return View("ManageUserRoles");
         }
 
+        /// <summary>
+        /// Wypełnienie dwóch list - użytkowników oraz ról.
+        /// </summary>
         public void PopulateUsersAndRoles()
         {
             var list = context.Roles.OrderBy(r => r.Name).ToList().Select(rr =>

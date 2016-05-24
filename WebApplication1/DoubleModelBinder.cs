@@ -9,6 +9,14 @@ namespace WebApplication1
 {
     public class DoubleModelBinder : IModelBinder
     {
+        /// <summary>
+        /// Binds the model to a value by using the specified controller context and binding context.
+        /// </summary>
+        /// <param name="controllerContext">The controller context.</param>
+        /// <param name="bindingContext">The binding context.</param>
+        /// <returns>
+        /// The bound value.
+        /// </returns>
         public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
             var valueResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);

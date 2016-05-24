@@ -8,12 +8,25 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
-    
+    /// <summary>
+    /// Kontroler strony domowej.
+    /// </summary>
+    /// <seealso cref="System.Web.Mvc.Controller" />
     public class HomeController : Controller
     {
+        /// <summary>
+        /// </summary>
         Context db = new Context();
+        /// <summary>
+        /// </summary>
         Context dbt = new Context();
 
+        /// <summary>
+        /// Widok strony głównej z listą incydentów i opcjami filtrowania incydentów z danego okresu.
+        /// </summary>
+        /// <returns>
+        /// Widok strony głównej z listą incydentów.
+        /// </returns>
         public ActionResult Index()
         {
             DateTime incidentsFromDate = DateTime.Now.AddDays(-30);
@@ -56,6 +69,14 @@ namespace WebApplication1.Controllers
             return View(list);
         }
 
+        /// <summary>
+        /// Filtrowanie incydentów zgodnie z określonym przedziałem dat.
+        /// </summary>
+        /// <param name="startDate">Data początkowa.</param>
+        /// <param name="endDate">Data końcowa.</param>
+        /// <returns>
+        /// Widok strony głównej z listą incydentów spomiędzy podanego przedziału czasu.
+        /// </returns>
         public ActionResult SetDates(string startDate, string endDate)
         {
             DateTime incidentsToDate = DateTime.ParseExact(endDate, "dd/M/yyyy", CultureInfo.InvariantCulture );
@@ -96,6 +117,12 @@ namespace WebApplication1.Controllers
             return View("Index", list);
         }
 
+        /// <summary>
+        /// Widok legendy wskazującej ikony odpowiadające typom incydentów.
+        /// </summary>
+        /// <returns>
+        /// Widok z listą typów incydentów.
+        /// </returns>
         public ActionResult About()
         {
             ViewBag.Message = "Legend.";
@@ -103,6 +130,10 @@ namespace WebApplication1.Controllers
             return View(db.IncidentTypes.ToList());
         }
 
+        /// <summary>
+        /// Contacts this instance.
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";

@@ -12,6 +12,9 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+    /// <summary>
+    /// Kontroler incydentów. Dostępny dla wszystkich oprócz roli Viewer.
+    /// </summary>
     [Authorize(Roles="Admin, Emergency, City cleaning, Police, Municipal police, Fire department, Other")]
     public class IncidentsController : Controller
     {
@@ -20,6 +23,10 @@ namespace WebApplication1.Controllers
         private ApplicationDbContext appDb = new ApplicationDbContext();
 
         // GET: Incidents
+        /// <summary>
+        /// Widok główny z listą incydentów.
+        /// </summary>
+        /// <returns>Widok z listą incydentów.</returns>
         public ActionResult Index()
         {
             List<IncidentsViewModel> list = new List<IncidentsViewModel>();
@@ -58,6 +65,11 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Incidents/Details/5
+        /// <summary>
+        /// Widok detali incydentu.
+        /// </summary>
+        /// <param name="id">ID incydentu.</param>
+        /// <returns>Widok detali incydentu lub listę incydentów przy braku uprawnień.</returns>
         public ActionResult Details(int? id)
         {
             bool authorized = false;
@@ -84,7 +96,7 @@ namespace WebApplication1.Controllers
             viewModel.TimeOfIncident = incident.TimeOfIncident;
             viewModel.Type = incident.Type;
             viewModel.ZipCode = incident.ZipCode;
-            viewModel.Participants = db.Participants.Where(p => p.incidentID == incident.ID);
+            
 
             var incidentRoles = db.ServiceParticipations.Where(s => s.IncidentId == id); 
             //(from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
@@ -106,11 +118,19 @@ namespace WebApplication1.Controllers
             }
 
             if (authorized)
+            {
+                viewModel.Participants = db.Participants.Where(p => p.incidentID == incident.ID);
                 return View(viewModel);
+            }
             else
                 return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// Potwierdzenie incydentu.
+        /// </summary>
+        /// <param name="id">ID incydentu.</param>
+        /// <returns>Przekierowanie do akcji widoku głównego.</returns>
         public ActionResult ConfirmIncident(int id)
         {
             Incident incident = db.Incidents.Find(id);
@@ -136,6 +156,11 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// Zaprzeczenie udzialu w incydencie.
+        /// </summary>
+        /// <param name="id">ID incydentu.</param>
+        /// <returns>Przekierowanie do akcji widoku głównego incydentów.</returns>
         public ActionResult DenyIncident(int id)
         {
             Incident incident = db.Incidents.Find(id);
@@ -156,6 +181,10 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Incidents/Create
+        /// <summary>
+        /// Widok tworzenia incydentu.
+        /// </summary>
+        /// <returns>Widok tworzenia incydentu z modelem uzupełnionym datami oraz listą typów incydentów.</returns>
         public ActionResult Create()
         {
             IncidentsViewModel newIncident = new IncidentsViewModel();
@@ -176,8 +205,12 @@ namespace WebApplication1.Controllers
             return this.View(newIncident);
         }
 
+        /// <summary>
+        /// Akcja kreowania incydentu z poziomu strony głównej.
+        /// </summary>
+        /// <param name="address">Adres dodania incydentu.</param>
+        /// <returns>Widok kreowania incydentu z uzupełnionym adresem i datami.</returns>
         [HttpPost]
-        //  [ValidateAntiForgeryToken]
         public ActionResult CreateIncident(string address)
         {
             List<SelectListItem> li = new List<SelectListItem>();
@@ -222,6 +255,11 @@ namespace WebApplication1.Controllers
         // POST: Incidents/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Tworzenie incydentu.
+        /// </summary>
+        /// <param name="incidentView">Model incydentu z widoku.</param>
+        /// <returns>Widok główny lub widok tworzenia incydentu w razie błędów.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long,Address,City,ZipCode,Roles")] IncidentsViewModel incidentView)
@@ -276,6 +314,11 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Incidents/Edit/5
+        /// <summary>
+        /// Widok edycji incydentów.
+        /// </summary>
+        /// <param name="id">ID incydentu.</param>
+        /// <returns>Widok edycji incydentu lub listy incydentów przy braku uprawnień.</returns>
         public ActionResult Edit(int? id)
         {
             bool authorized = false;
@@ -334,6 +377,11 @@ namespace WebApplication1.Controllers
         // POST: Incidents/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Edycja incydentu.
+        /// </summary>
+        /// <param name="incidentView">Model incydentu z widoku.</param>
+        /// <returns>Widok listy incydentów lub widok tworzenia incydentu w przypadku błędów.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ID,AddDate,DateOfIncident,TimeOfIncident,Type,About,Lat,Long,Address,City,ZipCode,Roles")] IncidentsViewModel incidentView)
@@ -385,6 +433,11 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Incidents/Delete/5
+        /// <summary>
+        /// Widok usuwania incydentów.
+        /// </summary>
+        /// <param name="id">ID incydentu.</param>
+        /// <returns>Widok usuwania incydentów lub widok listy incydentów w przypadku braku uprawnień.</returns>
         public ActionResult Delete(int? id)
         {
             bool authorized = false;
@@ -434,6 +487,11 @@ namespace WebApplication1.Controllers
         }
 
         // POST: Incidents/Delete/5
+        /// <summary>
+        /// Usunięcie incydentu.
+        /// </summary>
+        /// <param name="id">ID incydentu.</param>
+        /// <returns>Przekierowanie do widoku głównego.</returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -453,6 +511,10 @@ namespace WebApplication1.Controllers
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Pobranie ról służb.
+        /// </summary>
+        /// <returns>Listę dostępnych ról poza administratrem i widzem.</returns>
         public List<RoleViewModel> GetRoles()
         {
             List<RoleViewModel> list = new List<RoleViewModel>();

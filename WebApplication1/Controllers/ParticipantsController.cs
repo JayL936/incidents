@@ -12,6 +12,9 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+    /// <summary>
+    /// Kontroler uczestników. Dostępny dla wszystkich poza rolą Viewer.
+    /// </summary>
     [Authorize(Roles = "Admin, Emergency, City cleaning, Police, Municipal police, Fire department, Other")]
     public class ParticipantsController : Controller
     {
@@ -19,6 +22,10 @@ namespace WebApplication1.Controllers
         private ApplicationDbContext context = new ApplicationDbContext();
 
         // GET: Participants
+        /// <summary>
+        /// Widok listy uczestników.
+        /// </summary>
+        /// <returns>Widok z listą uczestników.</returns>
         public ActionResult Index()
         {
             List<int> list = new List<int>();
@@ -40,6 +47,11 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Participants/Details/5
+        /// <summary>
+        /// Widok detali uczestnika.
+        /// </summary>
+        /// <param name="id">ID uczestnika.</param>
+        /// <returns>Widok detali uczestnika lub przekierowanie do widoku głównego przy braku uprawnień.</returns>
         public ActionResult Details(string id)
         {
             if (id == null)
@@ -63,6 +75,11 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Participants/Create
+        /// <summary>
+        /// Widok tworzenia uczestnika.
+        /// </summary>
+        /// <param name="id">ID incydentu, dla którego tworzy się uczestnika.</param>
+        /// <returns>Widok Create lub przekierowanie do listy incydentów w razie podania ID, dla którego nie ma incydentu.</returns>
         public ActionResult Create(int? id)
         {
             List<int> list = new List<int>();
@@ -86,6 +103,11 @@ namespace WebApplication1.Controllers
         // POST: Participants/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Tworzenie uczestnika.
+        /// </summary>
+        /// <param name="participant">Model uczestnika z danymi z widoku.</param>
+        /// <returns>Widok główny w razie powodzenia, widok z danymi uczestnika, jeśli były błędy walidacji.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "PESEL,FirstName,LastName,About,DateOfBirth,pTypeID,incidentID")] Participant participant)
@@ -102,6 +124,11 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Participants/Edit/5
+        /// <summary>
+        /// Widok edycji uczestnika.
+        /// </summary>
+        /// <param name="id">ID uczestnika</param>
+        /// <returns>Widok z modelem uczestnika lub przekierowanie do widoku głównego.</returns>
         public ActionResult Edit(string id)
         {
             if (id == null)
@@ -140,6 +167,11 @@ namespace WebApplication1.Controllers
         // POST: Participants/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Zapis edycji uczestnika.
+        /// </summary>
+        /// <param name="participant">Model uczestnika z danymi z widoku.</param>
+        /// <returns>Widok główny w razie powodzenia, widok edycji z modelem uczestnika przy błędach walidacji.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "PESEL,FirstName,LastName,About,DateOfBirth,pTypeID,incidentID")] Participant participant)
@@ -155,6 +187,11 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Participants/Delete/5
+        /// <summary>
+        /// Widok usuwania uczestnika.
+        /// </summary>
+        /// <param name="id">ID uczestnika.</param>
+        /// <returns>Widok z modelem uczestnika lub widok główny przy braku uprawnień.</returns>
         public ActionResult Delete(string id)
         {
             if (id == null)
@@ -178,6 +215,11 @@ namespace WebApplication1.Controllers
         }
 
         // POST: Participants/Delete/5
+        /// <summary>
+        /// Usuwanie uczestnika.
+        /// </summary>
+        /// <param name="id">ID uczestnika.</param>
+        /// <returns>Widok główny.</returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)

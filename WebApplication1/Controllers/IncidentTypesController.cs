@@ -14,10 +14,18 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+    /// <summary>
+    /// Kontroler typu incydentu.
+    /// </summary>
+    [Authorize(Roles = "Admin")]
     public class IncidentTypesController : Controller
     {
         private Context db = new Context();
-
+        /// <summary>
+        /// Zapisanie ikony typu incydentu do elementu Blob.
+        /// </summary>
+        /// <param name="file">Plik ikony.</param>
+        /// <returns>Adres do zapisanego pliku.</returns>
         public string saveIconToBlob(HttpPostedFileBase file)
         {
             string azurePath;
@@ -35,14 +43,21 @@ namespace WebApplication1.Controllers
         }
 
         // GET: IncidentTypes
-        [Authorize(Roles = "Admin")]
+       /// <summary>
+       /// Widok główny z listą typów incydentów.
+       /// </summary>
+       /// <returns>Widok z listą typów incydentów.</returns>
         public ActionResult Index()
         {
             return View(db.IncidentTypes.ToList());
         }
 
         // GET: IncidentTypes/Details/5
-        [Authorize(Roles = "Admin")]
+        /// <summary>
+        /// Widok detali typu incydentu.
+        /// </summary>
+        /// <param name="id">ID typu incydentu.</param>
+        /// <returns>Widok detali z modelem typu incydentu.</returns>
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -58,7 +73,10 @@ namespace WebApplication1.Controllers
         }
 
         // GET: IncidentTypes/Create
-        [Authorize(Roles = "Admin")]
+       /// <summary>
+       /// Widok tworzenia typu incydentu.
+       /// </summary>
+       /// <returns>Widok.</returns>
         public ActionResult Create()
         {
             return View();
@@ -67,9 +85,14 @@ namespace WebApplication1.Controllers
         // POST: IncidentTypes/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Tworzenie typu incydentu.
+        /// </summary>
+        /// <param name="incidentType">Model typu incydentu z danymi z widoku.</param>
+        /// <param name="file">Plik ikony typu incydentu do zapisu w elemencie Blob.</param>
+        /// <returns>Widok główny w razie powodzenia, widok dodawania typu incydentu z modelem w przeciwnym wypadku.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public ActionResult Create([Bind(Include = "TypeID,Name")] IncidentType incidentType, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
@@ -88,7 +111,11 @@ namespace WebApplication1.Controllers
         }
 
         // GET: IncidentTypes/Edit/5
-        [Authorize(Roles = "Admin")]
+       /// <summary>
+       /// Widok edycji typu incydentu.
+       /// </summary>
+       /// <param name="id">ID typu incydentu.</param>
+       /// <returns>Widok z modelem typu incydentu.</returns>
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -106,9 +133,13 @@ namespace WebApplication1.Controllers
         // POST: IncidentTypes/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Edycja typu incydentu.
+        /// </summary>
+        /// <param name="incidentType">Model typu incydentu z danymi z widoku.</param>
+        /// <returns>Widok główny w razie powodzenia, widok z modelem typu incydentu w przeciwnym wypadku.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public ActionResult Edit([Bind(Include = "TypeID,Name")] IncidentType incidentType)
         {
             if (ModelState.IsValid)
@@ -121,7 +152,11 @@ namespace WebApplication1.Controllers
         }
 
         // GET: IncidentTypes/Delete/5
-        [Authorize(Roles = "Admin")]
+       /// <summary>
+       /// Widok usuwania typu incydentu.
+       /// </summary>
+       /// <param name="id">ID typu incydentu.</param>
+       /// <returns>Widok z modelem typu incydentu.</returns>
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -137,9 +172,13 @@ namespace WebApplication1.Controllers
         }
 
         // POST: IncidentTypes/Delete/5
+        /// <summary>
+        /// Usunięcie typu incydentu.
+        /// </summary>
+        /// <param name="id">ID typu incydentu.</param>
+        /// <returns>Widok główny.</returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             IncidentType incidentType = db.IncidentTypes.Find(id);
