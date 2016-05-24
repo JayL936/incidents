@@ -15,7 +15,7 @@ namespace WebApplication1.Controllers
     /// <summary>
     /// Kontroler incydentów. Dostępny dla wszystkich oprócz roli Viewer.
     /// </summary>
-    [Authorize(Roles = "Admin, Emergency, City cleaning, Police, Municipal police, Fire department, Other")]
+    [Authorize(Roles="Admin, Emergency, City cleaning, Police, Municipal police, Fire department, Other")]
     public class IncidentsController : Controller
     {
         private Context db = new Context();
@@ -96,9 +96,9 @@ namespace WebApplication1.Controllers
             viewModel.TimeOfIncident = incident.TimeOfIncident;
             viewModel.Type = incident.Type;
             viewModel.ZipCode = incident.ZipCode;
+            viewModel.Participants = db.Participants.Where(p => p.incidentID == incident.ID);
 
-
-            var incidentRoles = db.ServiceParticipations.Where(s => s.IncidentId == id);
+            var incidentRoles = db.ServiceParticipations.Where(s => s.IncidentId == id); 
             //(from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
             viewModel.Roles = GetRoles();
             foreach (RoleViewModel r in viewModel.Roles)
@@ -112,14 +112,12 @@ namespace WebApplication1.Controllers
                         {
                             authorized = true;
                             viewModel.confirmed = i.confirmed;
-                            if (i.confirmed == true)
-                                viewModel.Participants = db.Participants.Where(p => p.incidentID == incident.ID);
                         }
                     }
                 }
             }
 
-            if (authorized)
+            if (authorized)  
                 return View(viewModel);
             else
                 return RedirectToAction("Index");
@@ -138,7 +136,7 @@ namespace WebApplication1.Controllers
                 return HttpNotFound();
             }
             var part = db.ServiceParticipations.Where(p => p.IncidentId == id);
-            foreach (var p in part)
+            foreach(var p in part)
             {
                 if (User.IsInRole(p.RoleName))
                 {
@@ -292,7 +290,7 @@ namespace WebApplication1.Controllers
                             part.confirmed = true;
                         else
                             part.confirmed = false;
-                        db.ServiceParticipations.Add(part);
+                        db.ServiceParticipations.Add(part);   
                     }
                 }
                 db.SaveChanges();
@@ -340,7 +338,7 @@ namespace WebApplication1.Controllers
             viewModel.TimeOfIncident = incident.TimeOfIncident;
             viewModel.Type = incident.Type;
             var incidentRoles = db.ServiceParticipations.Where(s => s.IncidentId == id);
-            //     (from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
+           //     (from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
             viewModel.Roles = GetRoles();
             foreach (RoleViewModel r in viewModel.Roles)
             {
@@ -463,7 +461,7 @@ namespace WebApplication1.Controllers
             viewModel.TimeOfIncident = incident.TimeOfIncident;
             viewModel.Type = incident.Type;
 
-            var incidentRoles = db.ServiceParticipations.Where(s => s.IncidentId == id);
+            var incidentRoles = db.ServiceParticipations.Where(s => s.IncidentId == id); 
             //(from roles in db.ServiceParticipations where roles.IncidentId == id select roles.RoleId);
             viewModel.Roles = GetRoles();
             foreach (RoleViewModel r in viewModel.Roles)
