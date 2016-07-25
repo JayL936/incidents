@@ -1,7 +1,7 @@
 # incidents
 Application for storing and displaying data about incidents. 
 
-Polish version can be found below.
+*Polish version can be found below.*
 
 Account is required to use the application. You can create new account with limited functionality using "Register as a new user" link on 
 first displayed page. After creating an account you must relogin to gain access to view incidents on main map in Home page. Viewing 
