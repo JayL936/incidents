@@ -297,12 +297,8 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Scripts\jquery-2.2.2.intellisense.js" />
     <Content Include="Scripts\ai.0.23.1-build00166.js" />
     <Content Include="Scripts\ai.0.23.1-build00166.min.js" />
-    <Content Include="Scripts\jquery-2.2.2.js" />
-    <Content Include="Scripts\jquery-2.2.2.min.js" />
-    <Content Include="Scripts\jquery-2.2.2.min.map" />
     <None Include="Scripts\jquery-3.1.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.1.0.js" />
     <Content Include="Scripts\jquery-3.1.0.min.js" />
