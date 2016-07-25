@@ -140,5 +140,11 @@ namespace WebApplication1.Controllers
 
             return View();
         }
+
+        [AllowAnonymous]
+        public ActionResult Error()
+        {
+            return View();
+        }
     }
 }
