@@ -21,14 +21,12 @@ W razie wystąpienia błędu proszę chwilę poczekać i spróbować ponownie. Z
 
 # Funkcjonalności
 ## Dodawanie incydentów
-Incydenty można dodawać: 
-1. Z poziomu strony głównej,
-2. Z poziomu listy incydentów otwieranej po wybraniu opcji *Incidents* z poziomu głównego menu na górnej strony.
+Incydenty można dodawać z poziomu strony głównej lub poziomu listy incydentów otwieranej po wybraniu opcji *Incidents* z poziomu głównego menu na górnej strony.
 
-### Sposób pierwszy
+### Strona główna
 Należy wyświetlić główną stronę aplikacji. Można to osiągnąć poprzez wybranie z głównego menu opcji *Home* lub poprzez kliknięcie nazwy aplikacji - *Incidents 2016*. Na stronie głównej należy wskazać na mapie miejsce, gdzie ma zostać dodany incydent, a następnie rozwinąć pole *Create incident...* poprzez kliknięcie znajdującego się obok napisu znaku +. W polu tekstowym wyświetla się wybrany adres, jeśli jest prawidłowy, należy kliknąć przycisk *Create incydent*, po czym nastąpi przeniesienie do formularza dodawania incydentu. Tam można uzupełnić pozostałe dane na temat incydentu oraz zaznaczyć powiązane z nim służby. Należy koniecznie zaznaczyć służbę, do której należy konto, na którym jesteśmy zalogowani, gdyż w przeciwnym przypadku incydent nie będzie później widoczny. W przypadku konta qwe@qwe.pl jest to *Emergency*. 
 
-### Sposób drugi
+### Widok listy incydentów
 Inny sposób dodawania incydentu to wybranie opcji *Incidents* na górze strony, a następnie kliknięcie linku *Create new* nad listą incydentów. Nastąpi przeniesienie na formularz dodawania incydentu, gdzie należy uzupełnić wszystkie pola. Adres może zostać dodany poprzez wybranie miejsca na mapie. Analogicznie jak w sposobie pierwszym, należy koniecznie zaznaczyć służbę, do której należy konto, na którym jesteśmy zalogowani, gdyż w przeciwnym przypadku incydent nie będzie później widoczny. W przypadku konta qwe@qwe.pl jest to *Emergency*. 
 
 ## Wyświetlanie, edycja i usuwanie incydentów
