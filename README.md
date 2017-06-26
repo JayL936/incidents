@@ -1,5 +1,5 @@
 # incidents
-Application for storing and displaying data about incidents. Deployed with Microsoft Azure on http://incidents2016.azurewebsites.net/ 
+Application for storing and displaying data about incidents. Deployed with Microsoft Azure on http://incidents2016.azurewebsites.net/ [not available at the moment]
 
 _Polish version can be found below._
 
